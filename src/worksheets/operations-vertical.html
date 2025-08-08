@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Math Worksheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Inter:wght@400;600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
+    <style>
+        /* General Body and Page Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* A4 Page Container */
+        .page {
+            background: white;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Page break for printing */
+        .page.answer-key {
+            page-break-before: always;
+        }
+
+        /* Header Section */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-family: 'Comic Neue', cursive;
+            font-size: 2.5rem;
+            color: #333;
+            margin: 0;
+            text-transform: capitalize;
+        }
+
+        .info-fields {
+            font-size: 1rem;
+            color: #555;
+            text-align: right;
+        }
+
+        .info-fields div {
+            margin-bottom: 8px;
+        }
+
+        .info-fields span {
+            display: inline-block;
+            border-bottom: 1px solid #888;
+            min-width: 150px;
+            height: 20px;
+            margin-left: 8px;
+        }
+
+        /* Instructions */
+        .instructions {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        /* Problems Grid */
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px 40px;
+        }
+
+        /* Default Vertical Problem Style */
+        .problem {
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-align: right;
+            padding-right: 15px;
+        }
+
+        .problem .number {
+            display: block;
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 1px;
+            position: relative; /* Context for the operator */
+        }
+
+        /* This is the new operator style */
+        .problem .operator {
+            position: absolute;
+            left: 0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .problem .line {
+            border-bottom: 2px solid #333;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        /* Horizontal Style for Division */
+        .problem.horizontal {
+            text-align: left;
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+            font-family: 'Roboto Mono', monospace;
+            padding-left: 10px;
+        }
+
+        .problem.horizontal .expression {
+            letter-spacing: 2px;
+        }
+
+        .problem.horizontal .answer-box {
+            border-bottom: 2px solid #333;
+            margin-left: 10px;
+            min-width: 100px;
+            flex-grow: 1;
+        }
+
+        .problem.horizontal .line {
+            display: none;
+        }
+
+        .problem .answer-box {
+            height: 30px; /* Space for writing the answer */
+        }
+
+        /* Answer Key Specific Styles */
+        .answer-key .header h1 {
+            color: #4CAF50;
+        }
+
+        .answer-key .problem .answer-box {
+            color: #d32f2f; /* Red color for answers */
+            font-family: 'Roboto Mono', monospace;
+            letter-spacing: 2px;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Worksheet Page -->
+<div class="page" id="worksheet">
+    <header class="header">
+        <h1 id="worksheet-title">Math Practice</h1>
+        <div class="info-fields">
+            <div>Name: <span></span></div>
+            <div>Date: <span></span></div>
+        </div>
+    </header>
+
+    <p class="instructions" id="worksheet-instructions">Solve the problems below.</p>
+
+    <div class="problems-grid" id="problems-container">
+        <!-- Problems will be injected here by JavaScript -->
+    </div>
+</div>
+
+<!-- Answer Key Page -->
+<div class="page answer-key" id="answer-sheet">
+    <header class="header">
+        <h1 id="answer-key-title">Answer Key</h1>
+    </header>
+
+    <div class="problems-grid" id="answers-container">
+        <!-- Answers will be injected here by JavaScript -->
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- CONFIGURATION ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const operator = urlParams.get('operator') || 'add'; // 'add', 'subtract', 'multiply', 'divide'
+        const maxDigits = Math.min(parseInt(urlParams.get('digits'), 10) || 2, 6); // Limit to 6 digits
+        const problemCount = 21;
+
+        const operatorSymbols = {
+            add: '+',
+            subtract: '−', // Using minus sign, not hyphen
+            multiply: '×',
+            divide: '÷'
+        };
+        const operatorName = {
+            add: 'Addition',
+            subtract: 'Subtraction',
+            multiply: 'Multiplication',
+            divide: 'Division'
+        };
+
+        // --- DOM ELEMENTS ---
+        const problemsContainer = document.getElementById('problems-container');
+        const answersContainer = document.getElementById('answers-container');
+        document.getElementById('worksheet-title').textContent = `${operatorName[operator]} Practice`;
+        document.getElementById('answer-key-title').textContent = `${operatorName[operator]} Answer Key`;
+        document.getElementById('worksheet-instructions').textContent = `Find the result for each problem below.`;
+
+        // --- PROBLEM GENERATION ---
+        function generateProblem(op, digits) {
+            let num1, num2, answer;
+            const maxNum = Math.pow(10, digits) - 1;
+            const minNum = Math.pow(10, digits - 1) || 0;
+
+            switch (op) {
+                case 'subtract':
+                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                    num2 = Math.floor(Math.random() * num1) + 1; // Ensure num2 <= num1 for non-negative result
+                    answer = num1 - num2;
+                    break;
+
+                case 'multiply':
+                    const factor1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                    // Keep second factor smaller to be manageable
+                    const factor2Max = Math.min(maxNum, 9);
+                    const factor2 = Math.floor(Math.random() * factor2Max) + 1;
+                    num1 = factor1;
+                    num2 = factor2;
+                    answer = num1 * num2;
+                    break;
+
+                case 'divide':
+                    // Work backwards for clean division (no remainders)
+                    const divisorMax = Math.min(maxNum, 9);
+                    const divisor = Math.floor(Math.random() * (divisorMax - 2)) + 2; // Avoid 0, 1
+                    const quotientMax = Math.floor(maxNum / divisor);
+                    const quotient = Math.floor(Math.random() * (quotientMax - 1)) + 1;
+
+                    num1 = divisor * quotient; // This is the dividend
+                    num2 = divisor;
+                    answer = quotient;
+                    break;
+
+                case 'add':
+                default:
+                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                    num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+                    answer = num1 + num2;
+                    break;
+            }
+            return { num1, num2, answer };
+        }
+
+        // --- POPULATE WORKSHEET ---
+        const existingProblems = new Set();
+        for (let i = 0; i < problemCount; i++) {
+            let p, problemKey;
+            // Ensure unique problems
+            do {
+                p = generateProblem(operator, maxDigits);
+                problemKey = `${p.num1},${p.num2}`;
+            } while (existingProblems.has(problemKey));
+            existingProblems.add(problemKey);
+
+            const symbol = operatorSymbols[operator];
+            let problemHTML, answerHTML;
+
+            // Vertical layout for others - UPDATED STRUCTURE
+            problemHTML = `
+                    <div class="problem">
+                        <span class="number">${p.num1}</span>
+                        <span class="number">
+                            <span class="operator">${symbol}</span>${p.num2}
+                        </span>
+                        <div class="line"></div>
+                        <div class="answer-box"></div>
+                    </div>`;
+            answerHTML = `
+                    <div class="problem">
+                        <span class="number">${p.num1}</span>
+                        <span class="number">
+                            <span class="operator">${symbol}</span>${p.num2}
+                        </span>
+                        <div class="line"></div>
+                        <div class="answer-box">${p.answer}</div>
+                    </div>`;
+
+            problemsContainer.innerHTML += problemHTML;
+            answersContainer.innerHTML += answerHTML;
+        }
+    });
+</script>
+
+</body>
+</html>
