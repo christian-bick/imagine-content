@@ -30,6 +30,12 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             box-sizing: border-box;
             position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-wrapper {
+            flex-grow: 1;
         }
 
         /* Page break for printing */
@@ -44,7 +50,7 @@
             align-items: flex-start;
             border-bottom: 2px solid #e0e0e0;
             padding-bottom: 20px;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
@@ -73,14 +79,6 @@
             margin-left: 8px;
         }
 
-        /* Instructions */
-        .instructions {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 50px;
-            text-align: center;
-        }
-
         /* Problems Grid */
         .problems-grid {
             display: grid;
@@ -99,11 +97,10 @@
         .problem .number {
             display: block;
             font-family: 'Roboto Mono', monospace;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             position: relative; /* Context for the operator */
         }
 
-        /* This is the new operator style */
         .problem .operator {
             position: absolute;
             left: 0;
@@ -118,33 +115,29 @@
             position: relative;
         }
 
-        /* Horizontal Style for Division */
-        .problem.horizontal {
-            text-align: left;
-            display: flex;
-            align-items: center;
-            font-size: 1.4rem;
-            font-family: 'Roboto Mono', monospace;
-            padding-left: 10px;
-        }
-
-        .problem.horizontal .expression {
-            letter-spacing: 2px;
-        }
-
-        .problem.horizontal .answer-box {
-            border-bottom: 2px solid #333;
-            margin-left: 10px;
-            min-width: 100px;
-            flex-grow: 1;
-        }
-
-        .problem.horizontal .line {
-            display: none;
-        }
-
         .problem .answer-box {
             height: 30px; /* Space for writing the answer */
+        }
+
+        /* Footer Styles */
+        .footer {
+            width: 100%;
+            text-align: center;
+            padding-top: 20px;
+            margin-top: auto;
+            font-size: 0.8rem;
+            color: #777;
+        }
+        .footer a {
+            color: #555;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .footer img {
+            vertical-align: middle;
+            margin-left: 10px;
         }
 
         /* Answer Key Specific Styles */
@@ -162,6 +155,7 @@
         @media print {
             body { background: none; }
             .page { margin: 0; box-shadow: none; border: none; }
+            .no-print { display: none; }
         }
     </style>
 </head>
@@ -169,31 +163,40 @@
 
 <!-- Worksheet Page -->
 <div class="page" id="worksheet">
-    <header class="header">
-        <h1 id="worksheet-title">Math Practice</h1>
-        <div class="info-fields">
-            <div>Name: <span></span></div>
-            <div>Date: <span></span></div>
+    <div class="content-wrapper">
+        <header class="header">
+            <h1 id="worksheet-title">Math Practice</h1>
+            <div class="info-fields">
+                <div>Name <span></span></div>
+                <div>Date <span></span></div>
+            </div>
+        </header>
+
+        <div class="problems-grid" id="problems-container">
+            <!-- Problems will be injected here by JavaScript -->
         </div>
-    </header>
-
-    <p class="instructions" id="worksheet-instructions">Solve the problems below.</p>
-
-    <div class="problems-grid" id="problems-container">
-        <!-- Problems will be injected here by JavaScript -->
     </div>
 </div>
 
 <!-- Answer Key Page -->
 <div class="page answer-key" id="answer-sheet">
-    <header class="header">
-        <h1 id="answer-key-title">Answer Key</h1>
-    </header>
+    <div class="content-wrapper">
+        <header class="header">
+            <h1 id="answer-key-title">Answer Key</h1>
+        </header>
 
-    <div class="problems-grid" id="answers-container">
-        <!-- Answers will be injected here by JavaScript -->
+        <div class="problems-grid" id="answers-container">
+            <!-- Answers will be injected here by JavaScript -->
+        </div>
     </div>
+    <footer class="footer">
+        Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+    </footer>
 </div>
+
+<footer class="footer no-print">
+    <!-- This footer is only for the web view, not the printed pages -->
+</footer>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -201,7 +204,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const operator = urlParams.get('operator') || 'add'; // 'add', 'subtract', 'multiply', 'divide'
         const maxDigits = Math.min(parseInt(urlParams.get('digits'), 10) || 2, 6); // Limit to 6 digits
-        const problemCount = 21;
+        const problemCount = 15;
 
         const operatorSymbols = {
             add: '+',
@@ -221,7 +224,6 @@
         const answersContainer = document.getElementById('answers-container');
         document.getElementById('worksheet-title').textContent = `${operatorName[operator]} Practice`;
         document.getElementById('answer-key-title').textContent = `${operatorName[operator]} Answer Key`;
-        document.getElementById('worksheet-instructions').textContent = `Find the result for each problem below.`;
 
         // --- PROBLEM GENERATION ---
         function generateProblem(op, digits) {
@@ -282,7 +284,6 @@
             const symbol = operatorSymbols[operator];
             let problemHTML, answerHTML;
 
-            // Vertical layout for others - UPDATED STRUCTURE
             problemHTML = `
                     <div class="problem">
                         <span class="number">${p.num1}</span>
