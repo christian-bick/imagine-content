@@ -8,333 +8,35 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Inter:wght@400;600&family=Roboto+Mono:wght@600&display=swap"
           rel="stylesheet">
-    <style>
-        /* General Body and Page Styles */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        /* A4 Page Container */
-        .page {
-            background: white;
-            width: 210mm;
-            min-height: 297mm;
-            margin: 20px auto;
-            padding: 20mm;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .content-wrapper {
-            flex-grow: 1;
-        }
-
-        /* Page break for printing */
-        .page.answer-key {
-            page-break-before: always;
-        }
-
-        /* Header Section */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-family: 'Comic Neue', cursive;
-            font-size: 2.5rem;
-            color: #333;
-            margin: 0;
-            text-transform: capitalize;
-        }
-
-        .info-fields {
-            font-size: 1rem;
-            color: #555;
-            text-align: right;
-        }
-
-        .info-fields div {
-            margin-bottom: 8px;
-        }
-
-        .info-fields span {
-            display: inline-block;
-            border-bottom: 1px solid #888;
-            min-width: 150px;
-            height: 20px;
-            margin-left: 8px;
-        }
-
-        /* Problems Grid */
-        .problems-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 60px 40px;
-        }
-
-        /* Default Vertical Problem Style */
-        .problem {
-            font-size: 1.4rem;
-            font-weight: 600;
-            text-align: right;
-            padding-right: 15px;
-        }
-
-        .problem .number {
-            display: block;
-            font-family: 'Roboto Mono', monospace;
-            letter-spacing: 2px;
-            position: relative; /* Context for the operator */
-        }
-
-        .problem .operator {
-            position: absolute;
-            left: 0;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-        }
-
-        .problem .line {
-            border-bottom: 2px solid #333;
-            margin-top: 8px;
-            margin-bottom: 8px;
-            position: relative;
-        }
-
-        .problem .answer-box {
-            height: 30px; /* Space for writing the answer */
-        }
-
-        /* Footer Styles */
-        .footer {
-            width: 100%;
-            text-align: center;
-            padding-top: 20px;
-            margin-top: auto;
-            font-size: 0.8rem;
-            color: #777;
-        }
-
-        .footer a {
-            color: #555;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        .footer img {
-            vertical-align: middle;
-            margin-left: 10px;
-        }
-
-        /* Answer Key Specific Styles */
-        .answer-key .header h1 {
-            color: forestgreen;
-        }
-
-        .answer-box {
-            color: forestgreen;
-            font-family: 'Roboto Mono', monospace;
-            letter-spacing: 2px;
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                background: none;
-            }
-
-            .page {
-                margin: 0;
-                box-shadow: none;
-                border: none;
-            }
-
-            .no-print {
-                display: none;
-            }
-        }
-    </style>
+    <script type="module" src="./operations-vertical.js"></script>
 </head>
 <body>
 
 <!-- Worksheet Page -->
 <div class="page" id="worksheet">
     <div class="content-wrapper">
-        <header class="header">
-            <h1 id="worksheet-title">Math Practice</h1>
-            <div class="info-fields">
-                <div>Name <span></span></div>
-                <div>Date <span></span></div>
-            </div>
-        </header>
-
+        {{> header }}
         <div class="problems-grid" id="problems-container">
             <!-- Problems will be injected here by JavaScript -->
         </div>
     </div>
-    <footer class="footer">
-        Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
-    </footer>
+    {{> footer }}
 </div>
 
 <!-- Answer Key Page -->
 <div class="page answer-key" id="answer-sheet">
     <div class="content-wrapper">
-        <header class="header">
-            <h1 id="answer-key-title">Answer Key</h1>
-        </header>
-
+        {{> header }}
         <div class="problems-grid" id="answers-container">
             <!-- Answers will be injected here by JavaScript -->
         </div>
     </div>
-    <footer class="footer">
-        Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
-    </footer>
+    {{> footer }}
 </div>
 
 <footer class="footer no-print">
     <!-- This footer is only for the web view, not the printed pages -->
 </footer>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- CONFIGURATION ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const specifiedOperator = urlParams.get('operator');
-        const isMixedMode = !specifiedOperator;
-        const operator = specifiedOperator || 'add'; // Fallback for single-operator mode
-        const maxDigits = Math.min(parseInt(urlParams.get('digits'), 10) || 2, 6); // Limit to 6 digits
-        const problemCount = 15;
-
-        const operatorList = ['add', 'subtract', 'multiply', 'divide'];
-        const operatorSymbols = {
-            add: '+',
-            subtract: '−', // Using minus sign, not hyphen
-            multiply: '×',
-            divide: '÷'
-        };
-        const operatorName = {
-            add: 'Addition',
-            subtract: 'Subtraction',
-            multiply: 'Multiplication',
-            divide: 'Division'
-        };
-
-        // --- DOM ELEMENTS ---
-        const problemsContainer = document.getElementById('problems-container');
-        const answersContainer = document.getElementById('answers-container');
-
-        // --- SET TITLES ---
-        if (isMixedMode) {
-            document.getElementById('worksheet-title').textContent = 'Mixed Math Practice';
-            document.getElementById('answer-key-title').textContent = 'Mixed Math Answer Key';
-        } else {
-            document.getElementById('worksheet-title').textContent = `${operatorName[operator]} Practice`;
-            document.getElementById('answer-key-title').textContent = `${operatorName[operator]} Answer Key`;
-        }
-
-        // --- PROBLEM GENERATION ---
-        function generateProblem(op, digits) {
-            let num1, num2, answer;
-            const maxNum = Math.pow(10, digits) - 1;
-            const minNum = Math.pow(10, digits - 1) || 0;
-
-            switch (op) {
-                case 'subtract':
-                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-                    num2 = Math.floor(Math.random() * num1) + 1; // Ensure num2 <= num1 for non-negative result
-                    answer = num1 - num2;
-                    break;
-
-                case 'multiply':
-                    const factor1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-                    const factor2Max = Math.min(maxNum, 9);
-                    const factor2 = Math.floor(Math.random() * factor2Max) + 1;
-                    num1 = factor1;
-                    num2 = factor2;
-                    answer = num1 * num2;
-                    break;
-
-                case 'divide':
-                    const divisorMax = Math.min(maxNum, 9);
-                    const divisor = Math.floor(Math.random() * (divisorMax - 2)) + 2; // Avoid 0, 1
-                    const quotientMax = Math.floor(maxNum / divisor);
-                    const quotient = Math.floor(Math.random() * (quotientMax - 1)) + 1;
-
-                    num1 = divisor * quotient; // This is the dividend
-                    num2 = divisor;
-                    answer = quotient;
-                    break;
-
-                case 'add':
-                default:
-                    num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-                    num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-                    answer = num1 + num2;
-                    break;
-            }
-            return {num1, num2, answer};
-        }
-
-        // --- HTML GENERATION HELPER ---
-        function createProblemHTML(problem, symbol, displayedAnswer) {
-            return `
-            <div class="problem">
-                <span class="number">${problem.num1}</span>
-                <span class="number">
-                    <span class="operator">${symbol}</span>${problem.num2}
-                </span>
-                <div class="line"></div>
-                <div class="answer-box">${displayedAnswer}</div>
-            </div>`;
-        }
-
-        // --- POPULATE WORKSHEET ---
-        const existingProblems = new Set();
-        for (let i = 0; i < problemCount; i++) {
-            // If in mixed mode, pick a random operator for each problem
-            const currentOperator = isMixedMode ? operatorList[Math.floor(Math.random() * operatorList.length)] : operator;
-
-            let p, problemKey;
-            do {
-                p = generateProblem(currentOperator, maxDigits);
-                // Make the key unique for mixed mode (e.g., "10-5" is different from "10+5")
-                problemKey = `${p.num1},${currentOperator},${p.num2}`;
-            } while (existingProblems.has(problemKey));
-            existingProblems.add(problemKey);
-
-            const symbol = operatorSymbols[currentOperator];
-
-            // For the first problem (i=0), show the answer. Otherwise, leave it blank.
-            const answerForWorksheet = (i === 0) ? p.answer : '';
-
-            const problemHTML = createProblemHTML(p, symbol, answerForWorksheet);
-            const answerHTML = createProblemHTML(p, symbol, p.answer);
-
-            problemsContainer.innerHTML += problemHTML;
-            answersContainer.innerHTML += answerHTML;
-        }
-    });
-</script>
 
 </body>
 </html>

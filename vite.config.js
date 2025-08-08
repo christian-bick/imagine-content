@@ -1,8 +1,9 @@
 // vite.config.js
-import { relative, extname } from 'path';
+import { resolve, relative, extname } from 'path';
 import { defineConfig } from 'vite';
 import { globSync } from 'glob';
 import { fileURLToPath } from 'node:url';
+import handlebars from 'vite-plugin-handlebars';
 
 export default defineConfig({
     // ✨ Set the project's root to the 'src' directory
@@ -29,4 +30,10 @@ export default defineConfig({
             ),
         },
     },
+    plugins: [
+        handlebars({
+            // Point to the directory where your partials are located
+            partialDirectory: resolve(__dirname, './src/partials'),
+        }),
+    ],
 });
