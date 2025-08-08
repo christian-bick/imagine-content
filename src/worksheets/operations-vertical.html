@@ -190,6 +190,9 @@
             <!-- Problems will be injected here by JavaScript -->
         </div>
     </div>
+    <footer class="footer">
+        Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+    </footer>
 </div>
 
 <!-- Answer Key Page -->
@@ -216,10 +219,13 @@
     document.addEventListener('DOMContentLoaded', function () {
         // --- CONFIGURATION ---
         const urlParams = new URLSearchParams(window.location.search);
-        const operator = urlParams.get('operator') || 'add'; // 'add', 'subtract', 'multiply', 'divide'
+        const specifiedOperator = urlParams.get('operator');
+        const isMixedMode = !specifiedOperator;
+        const operator = specifiedOperator || 'add'; // Fallback for single-operator mode
         const maxDigits = Math.min(parseInt(urlParams.get('digits'), 10) || 2, 6); // Limit to 6 digits
         const problemCount = 15;
 
+        const operatorList = ['add', 'subtract', 'multiply', 'divide'];
         const operatorSymbols = {
             add: '+',
             subtract: '−', // Using minus sign, not hyphen
@@ -236,8 +242,15 @@
         // --- DOM ELEMENTS ---
         const problemsContainer = document.getElementById('problems-container');
         const answersContainer = document.getElementById('answers-container');
-        document.getElementById('worksheet-title').textContent = `${operatorName[operator]} Practice`;
-        document.getElementById('answer-key-title').textContent = `${operatorName[operator]} Answer Key`;
+
+        // --- SET TITLES ---
+        if (isMixedMode) {
+            document.getElementById('worksheet-title').textContent = 'Mixed Math Practice';
+            document.getElementById('answer-key-title').textContent = 'Mixed Math Answer Key';
+        } else {
+            document.getElementById('worksheet-title').textContent = `${operatorName[operator]} Practice`;
+            document.getElementById('answer-key-title').textContent = `${operatorName[operator]} Answer Key`;
+        }
 
         // --- PROBLEM GENERATION ---
         function generateProblem(op, digits) {
@@ -254,7 +267,6 @@
 
                 case 'multiply':
                     const factor1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-                    // Keep second factor smaller to be manageable
                     const factor2Max = Math.min(maxNum, 9);
                     const factor2 = Math.floor(Math.random() * factor2Max) + 1;
                     num1 = factor1;
@@ -263,7 +275,6 @@
                     break;
 
                 case 'divide':
-                    // Work backwards for clean division (no remainders)
                     const divisorMax = Math.min(maxNum, 9);
                     const divisor = Math.floor(Math.random() * (divisorMax - 2)) + 2; // Avoid 0, 1
                     const quotientMax = Math.floor(maxNum / divisor);
@@ -300,14 +311,18 @@
         // --- POPULATE WORKSHEET ---
         const existingProblems = new Set();
         for (let i = 0; i < problemCount; i++) {
+            // If in mixed mode, pick a random operator for each problem
+            const currentOperator = isMixedMode ? operatorList[Math.floor(Math.random() * operatorList.length)] : operator;
+
             let p, problemKey;
             do {
-                p = generateProblem(operator, maxDigits);
-                problemKey = `${p.num1},${p.num2}`;
+                p = generateProblem(currentOperator, maxDigits);
+                // Make the key unique for mixed mode (e.g., "10-5" is different from "10+5")
+                problemKey = `${p.num1},${currentOperator},${p.num2}`;
             } while (existingProblems.has(problemKey));
             existingProblems.add(problemKey);
 
-            const symbol = operatorSymbols[operator];
+            const symbol = operatorSymbols[currentOperator];
 
             // For the first problem (i=0), show the answer. Otherwise, leave it blank.
             const answerForWorksheet = (i === 0) ? p.answer : '';
