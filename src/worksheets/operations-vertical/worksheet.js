@@ -1,5 +1,5 @@
-import "../style.css"
-import "./operations-vertical.css"
+import "../../style.css"
+import "./worksheet.css"
 
 const urlParams = new URLSearchParams(window.location.search);
 const specifiedOperator = urlParams.get('operator');
