@@ -6,7 +6,8 @@
     <title>Customizable Math Worksheet</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Inter:wght@400;600&family=Roboto+Mono:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&family=Inter:wght@400;600&family=Roboto+Mono:wght@600&display=swap"
+          rel="stylesheet">
     <style>
         /* General Body and Page Styles */
         body {
@@ -27,7 +28,7 @@
             min-height: 297mm;
             margin: 20px auto;
             padding: 20mm;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
             position: relative;
             display: flex;
@@ -128,13 +129,16 @@
             font-size: 0.8rem;
             color: #777;
         }
+
         .footer a {
             color: #555;
             text-decoration: none;
         }
+
         .footer a:hover {
             text-decoration: underline;
         }
+
         .footer img {
             vertical-align: middle;
             margin-left: 10px;
@@ -142,20 +146,30 @@
 
         /* Answer Key Specific Styles */
         .answer-key .header h1 {
-            color: #4CAF50;
+            color: forestgreen;
         }
 
-        .answer-key .problem .answer-box {
-            color: #d32f2f; /* Red color for answers */
+        .answer-box {
+            color: forestgreen;
             font-family: 'Roboto Mono', monospace;
             letter-spacing: 2px;
         }
 
         /* Print Styles */
         @media print {
-            body { background: none; }
-            .page { margin: 0; box-shadow: none; border: none; }
-            .no-print { display: none; }
+            body {
+                background: none;
+            }
+
+            .page {
+                margin: 0;
+                box-shadow: none;
+                border: none;
+            }
+
+            .no-print {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -199,7 +213,7 @@
 </footer>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // --- CONFIGURATION ---
         const urlParams = new URLSearchParams(window.location.search);
         const operator = urlParams.get('operator') || 'add'; // 'add', 'subtract', 'multiply', 'divide'
@@ -267,14 +281,26 @@
                     answer = num1 + num2;
                     break;
             }
-            return { num1, num2, answer };
+            return {num1, num2, answer};
+        }
+
+        // --- HTML GENERATION HELPER ---
+        function createProblemHTML(problem, symbol, displayedAnswer) {
+            return `
+            <div class="problem">
+                <span class="number">${problem.num1}</span>
+                <span class="number">
+                    <span class="operator">${symbol}</span>${problem.num2}
+                </span>
+                <div class="line"></div>
+                <div class="answer-box">${displayedAnswer}</div>
+            </div>`;
         }
 
         // --- POPULATE WORKSHEET ---
         const existingProblems = new Set();
         for (let i = 0; i < problemCount; i++) {
             let p, problemKey;
-            // Ensure unique problems
             do {
                 p = generateProblem(operator, maxDigits);
                 problemKey = `${p.num1},${p.num2}`;
@@ -282,26 +308,12 @@
             existingProblems.add(problemKey);
 
             const symbol = operatorSymbols[operator];
-            let problemHTML, answerHTML;
 
-            problemHTML = `
-                    <div class="problem">
-                        <span class="number">${p.num1}</span>
-                        <span class="number">
-                            <span class="operator">${symbol}</span>${p.num2}
-                        </span>
-                        <div class="line"></div>
-                        <div class="answer-box"></div>
-                    </div>`;
-            answerHTML = `
-                    <div class="problem">
-                        <span class="number">${p.num1}</span>
-                        <span class="number">
-                            <span class="operator">${symbol}</span>${p.num2}
-                        </span>
-                        <div class="line"></div>
-                        <div class="answer-box">${p.answer}</div>
-                    </div>`;
+            // For the first problem (i=0), show the answer. Otherwise, leave it blank.
+            const answerForWorksheet = (i === 0) ? p.answer : '';
+
+            const problemHTML = createProblemHTML(p, symbol, answerForWorksheet);
+            const answerHTML = createProblemHTML(p, symbol, p.answer);
 
             problemsContainer.innerHTML += problemHTML;
             answersContainer.innerHTML += answerHTML;
