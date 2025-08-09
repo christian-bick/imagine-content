@@ -69,8 +69,6 @@ export function generateAddition({minNum1, maxNum1, minNum2, maxNum2}) {
 }
 
 export function generateProblem(op, {maxArg1, maxArg2}) {
-    let num1, num2, answer;
-
     const boundaries = {
         maxNum1: Math.pow(10, maxArg1) - 1,
         minNum1: Math.pow(10, maxArg1 - 1) || 0,
