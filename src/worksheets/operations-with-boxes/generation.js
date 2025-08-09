@@ -199,19 +199,19 @@ function generateMixedAll() {
 
 function generatePermutations() {
     return [
-        ...generateAdditionPermutations(),
-        ...generateSubtractionPermutations(),
-        ...generateDivisionPermutations(),
-        ...generateMultiplicationPermutations(),
-        ...generateMixedAddSubtract(),
-        ...generateMixedMultiplyDivide(),
+        //...generateAdditionPermutations(),
+        //...generateSubtractionPermutations(),
+        //...generateDivisionPermutations(),
+        //...generateMultiplicationPermutations(),
+        //...generateMixedAddSubtract(),
+        //...generateMixedMultiplyDivide(),
         ...generateMixedAll(),
     ];
 }
 
 function generateName(params) {
     const {digitsNum1, digitsNum2, operations, allowNegatives} = params;
-    let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_${operations.replace(',', '-')}`;
+    let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_${operations.replaceAll(',', '-')}`;
     if (allowNegatives) {
         name += '_neg';
     }
