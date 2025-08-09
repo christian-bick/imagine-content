@@ -1,46 +1,125 @@
-// src/generator/config.js
+const DEFAULT_COUNT = 1
 
-// --- BASE CONFIGURATIONS ---
+// --- PERMUTATION GENERATORS ---
 
-
-const baseSettings = {
-    digits: {
-        single: { digitsNum1: 1, digitsNum2: 1 },
-        double: { digitsNum1: 2, digitsNum2: 2 },
-        mixed: { digitsNum1: 2, digitsNum2: 1 },
-    },
-    operations: {
-        add_subtract: { operations: 'add,subtract' },
-        multiply: { operations: 'multiply' },
-        divide: { operations: 'divide' },
+function generateAdditionPermutations() {
+    const permutations = [];
+    for (let i = 2; i <= 5; i++) {
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: i,
+            operations: 'add',
+            count: DEFAULT_COUNT
+        });
     }
-};
+    permutations.push({
+        operations: 'add',
+        count: DEFAULT_COUNT
+    });
+    return permutations;
+}
+
+function generateSubtractionPermutations() {
+    const permutations = [];
+    for (let i = 2; i <= 5; i++) {
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: i,
+            operations: 'subtract',
+            count: DEFAULT_COUNT
+        });
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: i,
+            operations: 'subtract',
+            count: DEFAULT_COUNT,
+            allowNegatives: 1
+        });
+    }
+    permutations.push({
+        operations: 'subtract',
+        count: DEFAULT_COUNT
+    });
+    permutations.push({
+        operations: 'subtract',
+        count: DEFAULT_COUNT,
+        allowNegatives: 1
+    });
+    return permutations;
+}
+
+function generateDivisionPermutations() {
+    const permutations = [];
+    for (let i = 2; i <= 5; i++) {
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: 1,
+            operations: 'divide',
+            count: DEFAULT_COUNT
+        });
+    }
+    return permutations;
+}
+
+function generateMultiplicationPermutations() {
+    const permutations = [];
+    for (let i = 2; i <= 5; i++) {
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: 1,
+            operations: 'multiply',
+            count: DEFAULT_COUNT
+        });
+    }
+    return permutations;
+}
+
+function generateMixedAddSubtract() {
+    const permutations = [];
+    for (let i = 2; i <= 5; i++) {
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: i,
+            operations: 'add,subtract',
+            count: DEFAULT_COUNT
+        });
+    }
+    permutations.push({
+        operations: 'add,subtract',
+        count: DEFAULT_COUNT
+    });
+    return permutations;
+}
+
+function generateMixedMultiplyDivide() {
+    const permutations = [];
+    for (let i = 2; i <= 5; i++) {
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: 1,
+            operations: 'multiply,divide',
+            count: DEFAULT_COUNT
+        });
+    }
+    return permutations;
+}
 
 // --- PERMUTATION DEFINITIONS ---
 
 let permutations = [
-    { ...baseSettings.digits.double, ...baseSettings.operations.add_subtract, count: 3 },
-    { ...baseSettings.digits.single, ...baseSettings.operations.multiply, count: 2 },
-    { ...baseSettings.digits.mixed, ...baseSettings.operations.divide, count: 5 }
+    //...generateAdditionPermutations(),
+    //...generateSubtractionPermutations(),
+    //...generateDivisionPermutations(),
+    //...generateMultiplicationPermutations(),
+    //...generateMixedAddSubtract(),
+    //...generateMixedMultiplyDivide()
 ];
-
-// --- MODIFIERS ---
-
-function withNegatives(perms) {
-    const negativePerms = perms.map(p => ({
-        ...p,
-        allowNegatives: true,
-    }));
-    return [...perms, ...negativePerms];
-}
-
-permutations = withNegatives(permutations);
 
 // --- NAME GENERATION ---
 
 function generateName(params) {
-    const { digitsNum1, digitsNum2, operations, allowNegatives } = params;
-    let name = `${digitsNum1}x${digitsNum2}_${operations.replace(',', '-')}`;
+    const {digitsNum1, digitsNum2, operations, allowNegatives} = params;
+    let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_${operations.replace(',', '-')}`;
     if (allowNegatives) {
         name += '_neg';
     }
@@ -53,7 +132,7 @@ export function getConfigurations() {
     const moduleName = 'operations-vertical';
     const combinations = [];
     for (const perm of permutations) {
-        const { count, ...params } = perm;
+        const {count, ...params} = perm;
         const name = generateName(params);
         for (let i = 1; i <= count; i++) {
             combinations.push({
