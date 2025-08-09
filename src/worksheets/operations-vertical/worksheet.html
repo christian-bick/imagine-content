@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Math Worksheet</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600&display=swap"
-          rel="stylesheet">
-    <script type="module" src="worksheet.js"></script>
-</head>
+    {{> head script='worksheet.js' }}
 <body>
 
 <!-- Worksheet Page -->
@@ -33,10 +24,5 @@
     </div>
     {{> footer }}
 </div>
-
-<footer class="footer no-print">
-    <!-- This footer is only for the web view, not the printed pages -->
-</footer>
-
 </body>
 </html>
