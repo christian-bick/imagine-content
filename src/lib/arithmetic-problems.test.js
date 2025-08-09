@@ -69,6 +69,45 @@ describe('generateSubtraction', () => {
         });
     });
 
+    describe('when allowNegatives is true', () => {
+        it('should produce a negative answer when subtracting a larger positive number', () => {
+            vi.spyOn(Math, 'random').mockReturnValue(0); // Selects minimums
+            const config = { minNum1: 5, maxNum1: 10, minNum2: 15, maxNum2: 20 };
+            const { num1, num2, answer } = generateSubtraction(config, true);
+
+            expect(num1).toBe(5);
+            expect(num2).toBe(15);
+            expect(answer).toBe(-10);
+        });
+
+        it('should correctly subtract a negative number from a positive number (e.g., 10 - (-5))', () => {
+            vi.spyOn(Math, 'random').mockReturnValue(0); // Selects minimums
+            const config = { minNum1: 10, maxNum1: 10, minNum2: -5, maxNum2: -5 };
+            const { num1, num2, answer } = generateSubtraction(config, true);
+
+            expect(num1).toBe(10);
+            expect(num2).toBe(-5);
+            expect(answer).toBe(15);
+        });
+    });
+
+    describe('when allowNegatives is false', () => {
+        it('should still prevent negative answers even if boundaries are negative', () => {
+            vi.spyOn(Math, 'random')
+                .mockReturnValueOnce(0) // num1 = -10
+                .mockReturnValueOnce(0.999); // Tries to generate max num2
+
+            // Here, num1 will be -10. The logic should cap num2 at -10.
+            const config = { minNum1: -10, maxNum1: -5, minNum2: -20, maxNum2: -8 };
+            const { num1, num2, answer } = generateSubtraction(config, false);
+
+            expect(num1).toBe(-10);
+            // maxForNum2 is min(-10, -8) = -10. So num2's max is -10.
+            expect(num2).toBe(-10);
+            expect(answer).toBe(0);
+        });
+    });
+
     // --- Casual Use Cases ---
     // These tests check common, straightforward scenarios.
     describe('Casual Use Cases', () => {
@@ -187,6 +226,26 @@ describe('generateAddition', () => {
         expect(num2).toBe(75);
         expect(answer).toBe(100);
     });
+
+    it('should correctly add two negative numbers', () => {
+        vi.spyOn(Math, 'random').mockReturnValue(0); // Selects minimum values
+        const config = { minNum1: -20, maxNum1: -10, minNum2: -15, maxNum2: -5 };
+        const { num1, num2, answer } = generateAddition(config);
+
+        expect(num1).toBe(-20);
+        expect(num2).toBe(-15);
+        expect(answer).toBe(-35);
+    });
+
+    it('should correctly add a positive and a negative number', () => {
+        vi.spyOn(Math, 'random').mockReturnValue(0.999999); // Selects maximum values
+        const config = { minNum1: 10, maxNum1: 20, minNum2: -15, maxNum2: -5 };
+        const { num1, num2, answer } = generateAddition(config);
+
+        expect(num1).toBe(20);
+        expect(num2).toBe(-5);
+        expect(answer).toBe(15);
+    });
 });
 
 describe('generateMultiplication', () => {
@@ -209,6 +268,26 @@ describe('generateMultiplication', () => {
         expect(num1).toBe(10); // factor1
         expect(num2).toBe(10); // factor2
         expect(answer).toBe(100);
+    });
+
+    it('should produce a positive result when multiplying two negative numbers', () => {
+        vi.spyOn(Math, 'random').mockReturnValue(0); // Selects minimums
+        const config = { minNum1: -10, maxNum1: -5, minNum2: -4, maxNum2: -2 };
+        const { num1, num2, answer } = generateMultiplication(config);
+
+        expect(num1).toBe(-10);
+        expect(num2).toBe(-4);
+        expect(answer).toBe(40);
+    });
+
+    it('should produce a negative result when multiplying a positive and a negative number', () => {
+        vi.spyOn(Math, 'random').mockReturnValue(0.999999); // Selects maximums
+        const config = { minNum1: 5, maxNum1: 10, minNum2: -8, maxNum2: -2 };
+        const { num1, num2, answer } = generateMultiplication(config);
+
+        expect(num1).toBe(10);
+        expect(num2).toBe(-2);
+        expect(answer).toBe(-20);
     });
 
     // --- Boundary Cases ---
@@ -284,5 +363,35 @@ describe('generateDivision', () => {
 
         // Assert that calling the function with these impossible constraints throws the expected error.
         expect(badCall).toThrow("Could not generate a valid division problem with the given constraints.");
+    });
+
+    it('should correctly divide when the divisor is negative', () => {
+        // This test mocks Math.random to produce a specific, non-trivial result.
+        // 1st call to random() generates the divisor.
+        // 2nd call to random() generates the quotient.
+        vi.spyOn(Math, 'random')
+            .mockReturnValueOnce(0)      // Will produce divisor = -5.
+            .mockReturnValueOnce(0.5);   // With maxQuotient=-10, will produce quotient = -5.
+
+        const config = {maxNum1: 50, minNum2: -5, maxNum2: -2};
+        const {num1, num2, answer} = generateDivision(config);
+
+        expect(num2).toBe(-5);   // divisor
+        expect(answer).toBe(-5); // quotient
+        expect(num1).toBe(25);   // quotient * divisor
+    })
+
+    it('should correctly divide a negative number by a positive number', () => {
+        vi.spyOn(Math, 'random')
+            .mockReturnValueOnce(0) // divisor = 2
+            .mockReturnValueOnce(0.5); // quotient = floor(0.5 * -25) = -13
+
+        // This test requires minNum1 to be passed for negative dividends
+        const config = { minNum1: -50, maxNum1: -50, minNum2: 2, maxNum2: 5 };
+        const { num1, num2, answer } = generateDivision(config);
+
+        expect(num2).toBe(2);
+        expect(answer).toBe(-13);
+        expect(num1).toBe(-26);
     });
 });

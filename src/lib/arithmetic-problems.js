@@ -8,15 +8,20 @@ const operatorSymbols = {
     divide: '÷'
 };
 
-export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}) {
+export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}, allowNegatives=false) {
     const num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
-    const maxSubtracted = Math.min(num1, maxNum2)
-    const num2 = Math.floor(Math.random() * (maxSubtracted - minNum2 + 1)) + minNum2;
+    let num2;
+    if (allowNegatives) {
+        num2 = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
+    } else {
+        const maxForNum2 = Math.min(num1, maxNum2);
+        num2 = Math.floor(Math.random() * (maxForNum2 - minNum2 + 1)) + minNum2;
+    }
     const answer = num1 - num2;
     return {num1, num2, answer}
 }
 
-export function generateDivision({minNum1, maxNum1, minNum2, maxNum2}) {
+export function generateDivision({maxNum1, minNum2, maxNum2}) {
     let divisor;
     let quotient = 0; // Initialize quotient to ensure the loop runs correctly
     let tries = 0;
@@ -31,14 +36,14 @@ export function generateDivision({minNum1, maxNum1, minNum2, maxNum2}) {
         const maxQuotient = Math.floor(maxNum1 / divisor);
 
         // If a valid quotient (>1) cannot be found with this divisor, try again.
-        if (maxQuotient < 2) {
+        if (maxQuotient > -2 && maxQuotient < 2) {
             tries++;
             continue;
         }
 
         quotient = Math.floor(Math.random() * maxQuotient);
         tries++;
-    } while (1 >= divisor || 1 >= quotient);
+    } while (1 >= divisor && divisor >= -1 || 1 >= quotient && quotient >= -1);
 
     return {
         num1: quotient * divisor,
@@ -68,20 +73,23 @@ export function generateAddition({minNum1, maxNum1, minNum2, maxNum2}) {
     }
 }
 
-export function generateProblem(op, {maxArg1, maxArg2}) {
+export function generateProblem(op, {maxArg1, maxArg2, allowNegatives = false}) {
+    const maxNum1 = Math.pow(10, maxArg1) - 1;
+    const maxNum2 = Math.pow(10, maxArg2) - 1;
+
     const boundaries = {
-        maxNum1: Math.pow(10, maxArg1) - 1,
-        minNum1: Math.pow(10, maxArg1 - 1) || 0,
+        maxNum1: maxNum1,
+        // If negatives are allowed, min is -max, otherwise it's based on digits
+        minNum1: allowNegatives ? -maxNum1 : (Math.pow(10, maxArg1 - 1) || 0),
 
-        maxNum2: Math.pow(10, maxArg2) - 1,
-        minNum2: Math.pow(10, maxArg2 - 1) || 0,
+        maxNum2: maxNum2,
+        minNum2: allowNegatives ? -maxNum2 : (Math.pow(10, maxArg2 - 1) || 0),
     }
-
     let problem = {}
 
     switch (op) {
         case 'subtract':
-            problem = generateSubtraction(boundaries)
+            problem = generateSubtraction(boundaries, allowNegatives)
             break;
 
         case 'multiply':
