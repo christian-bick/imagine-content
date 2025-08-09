@@ -74,36 +74,52 @@ export function generateAddition({minNum1, maxNum1, minNum2, maxNum2}) {
 }
 
 export function generateProblem(op, {digitsNum1, digitsNum2, allowNegatives = false}) {
-    const maxNum1 = Math.pow(10, digitsNum1) - 1;
-    const maxNum2 = Math.pow(10, digitsNum2) - 1;
 
-    const boundaries = {
+    const exp1 = digitsNum1 ? digitsNum1 : Math.floor(Math.random() * 5) + 1
+    const maxNum1 = Math.pow(10, exp1) - 1;
+    const minNum1 = digitsNum1 ? Math.pow(10, exp1  - 1) || 0 : 1
+
+    const exp2 = digitsNum2 ? digitsNum2 : Math.floor(Math.random() * 6) + 1
+    const maxNum2 = Math.pow(10, exp2) - 1;
+    const minNum2 = digitsNum2 ? Math.pow(10, exp2  - 1) || 0 : 1
+
+    const defaultBoundaries = {
         maxNum1: maxNum1,
         // If negatives are allowed, min is -max, otherwise it's based on digits
-        minNum1: allowNegatives ? -maxNum1 : (Math.pow(10, digitsNum1 - 1) || 0),
+        minNum1: allowNegatives ? -maxNum1 : minNum1,
 
         maxNum2: maxNum2,
         // If negatives are allowed, min is -max, otherwise it's based on digits
-        minNum2: allowNegatives ? -maxNum2 : (Math.pow(10, digitsNum2 - 1) || 0),
+        minNum2: allowNegatives ? -maxNum2 : minNum2,
     }
     let problem = {}
 
     switch (op) {
         case 'subtract':
-            problem = generateSubtraction(boundaries, allowNegatives)
+            problem = generateSubtraction({
+                maxNum1: maxNum1,
+                minNum1: minNum1,
+                maxNum2: allowNegatives ? maxNum2 : Math.min(maxNum2, maxNum1),
+                minNum2: allowNegatives ? minNum2 : Math.min(minNum2, minNum1),
+            }, allowNegatives)
             break;
 
         case 'multiply':
-            problem = generateMultiplication(boundaries)
+            problem = generateMultiplication(defaultBoundaries)
             break;
 
         case 'divide':
-            problem = generateDivision(boundaries)
+            problem = generateDivision({
+                maxNum1: maxNum1,
+                minNum1: minNum1,
+                maxNum2: Math.min(maxNum2, Math.max(Math.pow(10, exp1 - 1), 5)),
+                minNum2: Math.min(minNum2, Math.max(Math.pow(10, exp1 - 2), 1)),
+            })
             break;
 
         case 'add':
         default:
-            problem = generateAddition(boundaries)
+            problem = generateAddition(defaultBoundaries)
             break;
     }
     problem.symbol = operatorSymbols[op];

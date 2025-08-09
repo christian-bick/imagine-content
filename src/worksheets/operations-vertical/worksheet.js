@@ -7,8 +7,8 @@ function getConfig() {
     const params = getParams(['operations', 'digitsNum1', 'digitsNum2', 'allowNegatives'])
     return {
         operations: params.operations ? params.operations.split(',') : [],
-        digitsNum1: Math.min(parseInt(params.digitsNum1, 10) || 2, 6),
-        digitsNum2: Math.min(parseInt(params.digitsNum2, 10) || 2, 6),
+        digitsNum1: Math.min(parseInt(params.digitsNum1, 10) || 0, 5),
+        digitsNum2: Math.min(parseInt(params.digitsNum2, 10) || 0, 5),
         allowNegatives: params.allowNegatives && (params.allowNegatives === "true" || parseInt(params.allowNegatives) === 1),
         problemCount: 15
     }
