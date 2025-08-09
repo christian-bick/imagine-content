@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "generate:pdf": "node src/generator/generate-pdf.js"
   },
   "devDependencies": {
     "glob": "^11.0.3",
@@ -15,6 +16,7 @@
     "vite-plugin-handlebars": "^2.0.0"
   },
   "dependencies": {
+    "puppeteer": "^24.16.0",
     "vitest": "^3.2.4"
   }
 }
