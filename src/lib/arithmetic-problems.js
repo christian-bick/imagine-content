@@ -8,7 +8,7 @@ const operatorSymbols = {
     divide: '÷'
 };
 
-export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}, allowNegatives=false) {
+export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}, allowNegatives = false) {
     const num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
     let num2;
     if (allowNegatives) {
@@ -73,15 +73,15 @@ export function generateAddition({minNum1, maxNum1, minNum2, maxNum2}) {
     }
 }
 
-export function generateProblem(op, {digitsNum1, digitsNum2, maxDigits, allowNegatives = false}) {
+export function generateProblem(op, {digitsNum1, digitsNum2, maxDigits = 5, allowNegatives = false}) {
 
-    const exp1 = digitsNum1 ? Math.min(digitsNum1, maxDigits): Math.floor(Math.random() * maxDigits) + 1
+    const exp1 = digitsNum1 ? Math.min(digitsNum1, maxDigits) : Math.floor(Math.random() * maxDigits) + 1
     const maxNum1 = Math.pow(10, exp1) - 1;
-    const minNum1 = digitsNum1 ? Math.pow(10, exp1  - 1) || 0 : 1
+    const minNum1 = digitsNum1 ? Math.pow(10, exp1 - 1) || 0 : 1
 
     const exp2 = digitsNum2 ? Math.min(digitsNum2, maxDigits) : Math.floor(Math.random() * maxDigits) + 1
     const maxNum2 = Math.pow(10, exp2) - 1;
-    const minNum2 = digitsNum2 ? Math.pow(10, exp2  - 1) || 0 : 1
+    const minNum2 = digitsNum2 ? Math.pow(10, exp2 - 1) || 0 : 1
 
     const defaultBoundaries = {
         maxNum1: maxNum1,
@@ -126,7 +126,7 @@ export function generateProblem(op, {digitsNum1, digitsNum2, maxDigits, allowNeg
     return problem;
 }
 
-export function getNextOperator (operations) {
+export function getNextOperator(operations) {
     if (operations.length === 0) {
         return operatorList[Math.floor(Math.random() * operatorList.length)]
     } else if (operations.length === 1) {
