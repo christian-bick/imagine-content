@@ -28,7 +28,6 @@ function createProblemHTML(problem) {
 }
 
 const config = getConfig()
-console.log(config)
 const problemSet = generateProblemSet(config)
 
 // --- DOM ELEMENTS ---
