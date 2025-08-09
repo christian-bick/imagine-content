@@ -43,11 +43,6 @@
     height: 30px; /* Space for writing the answer */
 }
 
-/* Answer Key Specific Styles */
-.answer-key .header h1 {
-    color: forestgreen;
-}
-
 .answer-box {
     color: forestgreen;
     font-family: 'Roboto Mono', monospace;

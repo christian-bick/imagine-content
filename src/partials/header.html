@@ -1,6 +1,6 @@
-<header class="header">
-    <h1 class="header-title">Math Practice</h1>
-    <div class="info-fields {{#if hideInfo}}disabled{{/if}}">
+<header class="header {{#if answerKey}}answer-key{{/if}}">
+    <h1 class="header-title }">Math Practice</h1>
+    <div class="info-fields">
         <div>Name <span></span></div>
         <div>Date <span></span></div>
     </div>
@@ -43,7 +43,11 @@
         margin-left: 8px;
     }
 
-    .disabled {
+    .answer-key .info-fields {
         display: none;
+    }
+
+    .answer-key .header-title {
+        color: forestgreen;
     }
 </style>

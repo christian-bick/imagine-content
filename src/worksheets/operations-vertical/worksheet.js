@@ -13,13 +13,6 @@ function getConfig() {
     }
 }
 
-const operatorName = {
-    add: 'Addition',
-    subtract: 'Subtraction',
-    multiply: 'Multiplication',
-    divide: 'Division'
-};
-
 // --- HTML GENERATION HELPER ---
 function createProblemHTML(problem) {
     return `
