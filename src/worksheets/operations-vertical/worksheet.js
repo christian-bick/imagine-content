@@ -4,12 +4,13 @@ import {getParams} from "../../lib/params.js";
 import {generateProblemSet} from "../../lib/arithmetic-problems.js"
 
 function getConfig() {
-    const params = getParams(['operator', 'maxArg1', 'maxArg2'])
+    const params = getParams(['operator', 'digitsNum1', 'digitsNum2', 'allowNegatives'])
     return {
         isMixedMode: !params.operator,
         operator: params.operator || 'add',
-        maxArg1: Math.min(parseInt(params.maxArg1, 10) || 2, 6),
-        maxArg2: Math.min(parseInt(params.maxArg2, 10) || 2, 6),
+        digitsNum1: Math.min(parseInt(params.digitsNum1, 10) || 2, 6),
+        digitsNum2: Math.min(parseInt(params.digitsNum2, 10) || 2, 6),
+        allowNegatives: params.allowNegatives && (params.allowNegatives === "true" || parseInt(params.allowNegatives) === 1),
         problemCount: 15
     }
 }

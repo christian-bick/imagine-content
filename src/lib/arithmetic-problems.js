@@ -73,17 +73,18 @@ export function generateAddition({minNum1, maxNum1, minNum2, maxNum2}) {
     }
 }
 
-export function generateProblem(op, {maxArg1, maxArg2, allowNegatives = false}) {
-    const maxNum1 = Math.pow(10, maxArg1) - 1;
-    const maxNum2 = Math.pow(10, maxArg2) - 1;
+export function generateProblem(op, {digitsNum1, digitsNum2, allowNegatives = false}) {
+    const maxNum1 = Math.pow(10, digitsNum1) - 1;
+    const maxNum2 = Math.pow(10, digitsNum2) - 1;
 
     const boundaries = {
         maxNum1: maxNum1,
         // If negatives are allowed, min is -max, otherwise it's based on digits
-        minNum1: allowNegatives ? -maxNum1 : (Math.pow(10, maxArg1 - 1) || 0),
+        minNum1: allowNegatives ? -maxNum1 : (Math.pow(10, digitsNum1 - 1) || 0),
 
         maxNum2: maxNum2,
-        minNum2: allowNegatives ? -maxNum2 : (Math.pow(10, maxArg2 - 1) || 0),
+        // If negatives are allowed, min is -max, otherwise it's based on digits
+        minNum2: allowNegatives ? -maxNum2 : (Math.pow(10, digitsNum2 - 1) || 0),
     }
     let problem = {}
 
