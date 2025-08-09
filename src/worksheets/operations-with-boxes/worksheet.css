@@ -39,7 +39,11 @@
 }
 
 .answer-box {
-    color: forestgreen;
     font-family: 'Roboto Mono', monospace;
     letter-spacing: 2px;
+}
+
+.highlight {
+    background-color: #fff3cd;
+    border-radius: 3px;
 }

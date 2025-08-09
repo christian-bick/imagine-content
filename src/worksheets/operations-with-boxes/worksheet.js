@@ -17,14 +17,16 @@ function getConfig() {
 }
 
 // --- HTML GENERATION HELPER ---
-function createProblemHTML(problem) {
+function createProblemHTML(problem, highlightKey = '') {
+    const isHighlighted = (key) => key === highlightKey ? 'highlight' : '';
+
     return `
         <div class="problem">
-            <div class="box">${problem.num1}</div>
-            <div class="symbol">${problem.symbol}</div>
-            <div class="box">${problem.num2}</div>
+            <div class="box ${isHighlighted('num1')}">${problem.num1}</div>
+            <div class="symbol ${isHighlighted('symbol')}">${problem.symbol}</div>
+            <div class="box ${isHighlighted('num2')}">${problem.num2}</div>
             <div class="symbol">=</div>
-            <div class="box answer-box">${problem.answer}</div>
+            <div class="box answer-box ${isHighlighted('answer')}">${problem.answer}</div>
         </div>`;
 }
 
@@ -37,38 +39,40 @@ const answersContainer = document.getElementById('answers-container');
 
 for (const [index, problem] of problemSet.entries()) {
     const worksheetProblem = { ...problem };
+    let blankPartKey = '';
 
-    // For all problems except the first one, which serves as an example, blank out a part of the problem.
+    // Determine the blank part
+    switch (config.blankPart) {
+        case 'problem': {
+            const parts = ['num1', 'num2'];
+            blankPartKey = parts[Math.floor(Math.random() * parts.length)];
+            break;
+        }
+        case 'operator':
+            blankPartKey = 'symbol';
+            break;
+        case 'random': {
+            const allParts = ['num1', 'num2', 'answer', 'symbol'];
+            blankPartKey = allParts[Math.floor(Math.random() * allParts.length)];
+            break;
+        }
+        case 'answer':
+        default:
+            blankPartKey = 'answer';
+            break;
+    }
+
+    // For all problems except the first one, blank out the determined part.
     if (index > 0) {
-        switch (config.blankPart) {
-            case 'problem': {
-                const parts = ['num1', 'num2'];
-                const partToBlank = parts[Math.floor(Math.random() * parts.length)];
-                worksheetProblem[partToBlank] = '';
-                break;
-            }
-            case 'operator':
-                worksheetProblem.symbol = '';
-                break;
-            case 'random': {
-                const allParts = ['num1', 'num2', 'answer', 'symbol'];
-                const randomPartToBlank = allParts[Math.floor(Math.random() * allParts.length)];
-                if (randomPartToBlank === 'symbol') {
-                    worksheetProblem.symbol = '';
-                } else {
-                    worksheetProblem[randomPartToBlank] = '';
-                }
-                break;
-            }
-            case 'answer':
-            default:
-                worksheetProblem.answer = '';
-                break;
+        if (blankPartKey === 'symbol') {
+            worksheetProblem.symbol = '';
+        } else {
+            worksheetProblem[blankPartKey] = '';
         }
     }
 
-    const problemHTML = createProblemHTML(worksheetProblem);
-    const answerHTML = createProblemHTML(problem); // The answer sheet always shows the full problem
+    const problemHTML = createProblemHTML(worksheetProblem, index === 0 ? blankPartKey : '');
+    const answerHTML = createProblemHTML(problem, blankPartKey);
 
     problemsContainer.innerHTML += problemHTML;
     answersContainer.innerHTML += answerHTML;
