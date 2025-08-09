@@ -32,11 +32,6 @@ const problemSet = generateProblemSet(config)
 // --- DOM ELEMENTS ---
 const problemsContainer = document.getElementById('problems-container');
 const answersContainer = document.getElementById('answers-container');
-const headerTitleElements = document.getElementsByClassName('header-title')
-
-// --- SET TITLES ---
-headerTitleElements[0].textContent = `Base Operations`;
-headerTitleElements[1].textContent = `Base Operations Answers`;
 
 for (const [index, problem] of problemSet.entries()) {
     // For the first problem (i=0), show the answer. Otherwise, leave it blank.
