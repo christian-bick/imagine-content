@@ -24,7 +24,7 @@ async function loadConfig(moduleName) {
 
 function getWorksheetUrl(moduleName, params) {
     const urlParams = new URLSearchParams(params);
-    return `${BASE_URL}/src/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`;
+    return `${BASE_URL}/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`;
 }
 
 export function getConfigurations(moduleName, config) {
