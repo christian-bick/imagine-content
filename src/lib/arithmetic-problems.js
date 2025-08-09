@@ -17,19 +17,36 @@ export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}) {
 }
 
 export function generateDivision({minNum1, maxNum1, minNum2, maxNum2}) {
-    let divisor, quotient;
+    let divisor;
+    let quotient = 0; // Initialize quotient to ensure the loop runs correctly
+    let tries = 0;
+    const maxTries = 50; // Circuit breaker limit
 
     do {
+        if (tries >= maxTries) {
+            throw new Error("Could not generate a valid division problem with the given constraints.");
+        }
+
         divisor = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
         const maxQuotient = Math.floor(maxNum1 / divisor);
+
+        // If a valid quotient (>1) cannot be found with this divisor, try again.
+        if (maxQuotient < 2) {
+            tries++;
+            continue;
+        }
+
         quotient = Math.floor(Math.random() * maxQuotient);
+        tries++;
     } while (1 >= divisor || 1 >= quotient);
+
     return {
         num1: quotient * divisor,
         num2: divisor,
         answer: quotient,
     }
 }
+
 
 export function generateMultiplication({minNum1, maxNum1, minNum2, maxNum2}) {
     const factor1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
