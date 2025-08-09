@@ -73,13 +73,13 @@ export function generateAddition({minNum1, maxNum1, minNum2, maxNum2}) {
     }
 }
 
-export function generateProblem(op, {digitsNum1, digitsNum2, allowNegatives = false}) {
+export function generateProblem(op, {digitsNum1, digitsNum2, maxDigits, allowNegatives = false}) {
 
-    const exp1 = digitsNum1 ? digitsNum1 : Math.floor(Math.random() * 5) + 1
+    const exp1 = digitsNum1 ? Math.min(digitsNum1, maxDigits): Math.floor(Math.random() * maxDigits) + 1
     const maxNum1 = Math.pow(10, exp1) - 1;
     const minNum1 = digitsNum1 ? Math.pow(10, exp1  - 1) || 0 : 1
 
-    const exp2 = digitsNum2 ? digitsNum2 : Math.floor(Math.random() * 6) + 1
+    const exp2 = digitsNum2 ? Math.min(digitsNum2, maxDigits) : Math.floor(Math.random() * maxDigits) + 1
     const maxNum2 = Math.pow(10, exp2) - 1;
     const minNum2 = digitsNum2 ? Math.pow(10, exp2  - 1) || 0 : 1
 
