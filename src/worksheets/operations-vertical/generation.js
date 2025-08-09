@@ -106,11 +106,11 @@ function generateMixedMultiplyDivide() {
 
 function generatePermutations() {
     return [
-        //...generateAdditionPermutations(),
-        //...generateSubtractionPermutations(),
-        //...generateDivisionPermutations(),
-        //...generateMultiplicationPermutations(),
-        //...generateMixedAddSubtract(),
+        ...generateAdditionPermutations(),
+        ...generateSubtractionPermutations(),
+        ...generateDivisionPermutations(),
+        ...generateMultiplicationPermutations(),
+        ...generateMixedAddSubtract(),
         ...generateMixedMultiplyDivide()
     ];
 }
