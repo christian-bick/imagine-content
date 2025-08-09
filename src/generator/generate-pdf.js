@@ -2,7 +2,6 @@ import puppeteer from 'puppeteer';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync, mkdirSync } from 'fs';
-import { config } from '../worksheets/operations-vertical/generation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,16 +10,28 @@ const PROJECT_ROOT = resolve(__dirname, '..', '..');
 const TEMP_DIR = resolve(PROJECT_ROOT, 'temp');
 const BASE_URL = 'http://localhost:5173';
 
-function getWorksheetUrl(moduleName, params) {
-    const urlParams = new URLSearchParams(params);
-    return `${BASE_URL}/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`;
+async function loadConfig(moduleName) {
+    const configPath = `../worksheets/${moduleName}/generation.js`;
+    try {
+        const { config } = await import(configPath);
+        return config;
+    } catch (error) {
+        console.error(`Failed to load configuration for module: ${moduleName}`);
+        console.error(error);
+        process.exit(1);
+    }
 }
 
-export function getConfigurations(moduleName) {
+function getWorksheetUrl(moduleName, params) {
+    const urlParams = new URLSearchParams(params);
+    return `${BASE_URL}/src/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`;
+}
+
+export function getConfigurations(moduleName, config) {
     const combinations = [];
-    const permutations = config.generatePermutations()
+    const permutations = config.generatePermutations();
     for (const perm of permutations) {
-        const {count, ...params} = perm;
+        const { count, ...params } = perm;
         const name = config.generateName(params);
         for (let i = 1; i <= count; i++) {
             combinations.push({
@@ -33,7 +44,18 @@ export function getConfigurations(moduleName) {
 }
 
 async function generatePdfs() {
-    const configurations = getConfigurations();
+    const args = process.argv.slice(2);
+    const moduleName = args[0];
+
+    if (!moduleName) {
+        console.error('Please provide a module name as an argument.');
+        process.exit(1);
+    }
+
+    console.log(`Generating PDFs for module: ${moduleName}`);
+
+    const config = await loadConfig(moduleName);
+    const configurations = getConfigurations(moduleName, config);
 
     console.log('Launching browser...');
     const browser = await puppeteer.launch({ headless: "new" });
@@ -45,7 +67,7 @@ async function generatePdfs() {
     }
 
     for (const config of configurations) {
-        const url = getWorksheetUrl('operations-vertical', config.params);
+        const url = getWorksheetUrl(moduleName, config.params);
         console.log(`Navigating to ${url}`);
         await page.goto(url, { waitUntil: 'networkidle0' });
 
