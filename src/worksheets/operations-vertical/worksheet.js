@@ -4,10 +4,9 @@ import {getParams} from "../../lib/params.js";
 import {generateProblemSet} from "../../lib/arithmetic-problems.js"
 
 function getConfig() {
-    const params = getParams(['operator', 'digitsNum1', 'digitsNum2', 'allowNegatives'])
+    const params = getParams(['operations', 'digitsNum1', 'digitsNum2', 'allowNegatives'])
     return {
-        isMixedMode: !params.operator,
-        operator: params.operator || 'add',
+        operations: params.operations ? params.operations.split(',') : [],
         digitsNum1: Math.min(parseInt(params.digitsNum1, 10) || 2, 6),
         digitsNum2: Math.min(parseInt(params.digitsNum2, 10) || 2, 6),
         allowNegatives: params.allowNegatives && (params.allowNegatives === "true" || parseInt(params.allowNegatives) === 1),
@@ -29,6 +28,7 @@ function createProblemHTML(problem) {
 }
 
 const config = getConfig()
+console.log(config)
 const problemSet = generateProblemSet(config)
 
 // --- DOM ELEMENTS ---

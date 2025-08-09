@@ -110,18 +110,28 @@ export function generateProblem(op, {digitsNum1, digitsNum2, allowNegatives = fa
     return problem;
 }
 
+export function getNextOperator (operations) {
+    if (operations.length === 0) {
+        return operatorList[Math.floor(Math.random() * operatorList.length)]
+    } else if (operations.length === 1) {
+        return operations[0]
+    } else {
+        return operations[Math.floor(Math.random() * operations.length)]
+    }
+}
+
 export function generateProblemSet(config) {
     const existingProblemKeys = new Set();
     const generatedProblems = []
     for (let i = 0; i < config.problemCount; i++) {
         // If in mixed mode, pick a random operator for each problem
-        const currentOperator = config.isMixedMode ? operatorList[Math.floor(Math.random() * operatorList.length)] : config.operator;
+        const currentOperation = getNextOperator(config.operations);
 
         let problem, problemKey;
         do {
-            problem = generateProblem(currentOperator, config);
+            problem = generateProblem(currentOperation, config);
             // Make the key unique for mixed mode (e.g., "10-5" is different from "10+5")
-            problemKey = `${problem.num1},${currentOperator},${problem.num2}`;
+            problemKey = `${problem.num1},${currentOperation},${problem.num2}`;
         } while (existingProblemKeys.has(problemKey));
         existingProblemKeys.add(problemKey);
         generatedProblems.push(problem)
