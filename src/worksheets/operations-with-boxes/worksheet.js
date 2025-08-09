@@ -48,6 +48,11 @@ for (const [index, problem] of problemSet.entries()) {
             blankPartKey = parts[Math.floor(Math.random() * parts.length)];
             break;
         }
+        case 'problem-answer': {
+            const parts = ['num1', 'num2', 'answer'];
+            blankPartKey = parts[Math.floor(Math.random() * parts.length)];
+            break;
+        }
         case 'operator':
             blankPartKey = 'symbol';
             break;
