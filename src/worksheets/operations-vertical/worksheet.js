@@ -1,4 +1,4 @@
-import "../../style.css"
+import "../style.css"
 import "./worksheet.css"
 import {getParams} from "../../lib/params.js";
 import {generateProblemSet} from "../../lib/arithmetic-problems.js"

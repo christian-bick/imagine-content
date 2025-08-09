@@ -2,25 +2,19 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: #f4f4f9;
     margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
-/* A4 Page Container */
+/* Main content container */
 .page {
     background: white;
-    width: 210mm;
-    min-height: 297mm;
-    margin: 20px auto;
-    padding: 20mm;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .content-wrapper {
@@ -42,4 +36,32 @@ body {
     .no-print {
         display: none;
     }
+}
+
+/* Index Page Specific Styles */
+.module-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.module-list li {
+    margin-bottom: 15px;
+}
+
+.module-list a {
+    display: block;
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.module-list a:hover {
+    background-color: #e9e9e9;
+    transform: translateY(-2px);
 }
