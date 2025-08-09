@@ -104,18 +104,16 @@ function generateMixedMultiplyDivide() {
     return permutations;
 }
 
-// --- PERMUTATION DEFINITIONS ---
-
-let permutations = [
-    //...generateAdditionPermutations(),
-    //...generateSubtractionPermutations(),
-    //...generateDivisionPermutations(),
-    //...generateMultiplicationPermutations(),
-    //...generateMixedAddSubtract(),
-    //...generateMixedMultiplyDivide()
-];
-
-// --- NAME GENERATION ---
+function generatePermutations() {
+    return [
+        //...generateAdditionPermutations(),
+        //...generateSubtractionPermutations(),
+        //...generateDivisionPermutations(),
+        //...generateMultiplicationPermutations(),
+        //...generateMixedAddSubtract(),
+        ...generateMixedMultiplyDivide()
+    ];
+}
 
 function generateName(params) {
     const {digitsNum1, digitsNum2, operations, allowNegatives} = params;
@@ -126,20 +124,7 @@ function generateName(params) {
     return name;
 }
 
-// --- EXPORT ---
-
-export function getConfigurations() {
-    const moduleName = 'operations-vertical';
-    const combinations = [];
-    for (const perm of permutations) {
-        const {count, ...params} = perm;
-        const name = generateName(params);
-        for (let i = 1; i <= count; i++) {
-            combinations.push({
-                params: params,
-                filename: `${moduleName}_${name}_v${i}.pdf`
-            });
-        }
-    }
-    return combinations;
+export const config = {
+    generatePermutations,
+    generateName,
 }

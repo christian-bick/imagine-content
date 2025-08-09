@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync, mkdirSync } from 'fs';
-import { getConfigurations } from './config.js';
+import { config } from '../worksheets/operations-vertical/generation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,6 +14,22 @@ const BASE_URL = 'http://localhost:5173';
 function getWorksheetUrl(moduleName, params) {
     const urlParams = new URLSearchParams(params);
     return `${BASE_URL}/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`;
+}
+
+export function getConfigurations(moduleName) {
+    const combinations = [];
+    const permutations = config.generatePermutations()
+    for (const perm of permutations) {
+        const {count, ...params} = perm;
+        const name = config.generateName(params);
+        for (let i = 1; i <= count; i++) {
+            combinations.push({
+                params: params,
+                filename: `${moduleName}_${name}_v${i}.pdf`
+            });
+        }
+    }
+    return combinations;
 }
 
 async function generatePdfs() {
