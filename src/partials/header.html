@@ -1,6 +1,6 @@
 <header class="header">
     <h1 class="header-title">Math Practice</h1>
-    <div class="info-fields">
+    <div class="info-fields {{#if hideInfo}}disabled{{/if}}">
         <div>Name <span></span></div>
         <div>Date <span></span></div>
     </div>
@@ -41,5 +41,9 @@
         min-width: 150px;
         height: 20px;
         margin-left: 8px;
+    }
+
+    .disabled {
+        display: none;
     }
 </style>
