@@ -2,16 +2,22 @@ import puppeteer from 'puppeteer';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { existsSync, mkdirSync } from 'fs';
-import { getUrls } from './config.js';
+import { getConfigurations } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PROJECT_ROOT = resolve(__dirname, '..', '..');
 const TEMP_DIR = resolve(PROJECT_ROOT, 'temp');
+const BASE_URL = 'http://localhost:5173';
+
+function getWorksheetUrl(moduleName, params) {
+    const urlParams = new URLSearchParams(params);
+    return `${BASE_URL}/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`;
+}
 
 async function generatePdfs() {
-    const combinations = getUrls();
+    const configurations = getConfigurations();
 
     console.log('Launching browser...');
     const browser = await puppeteer.launch({ headless: "new" });
@@ -22,12 +28,13 @@ async function generatePdfs() {
         mkdirSync(TEMP_DIR);
     }
 
-    for (const combo of combinations) {
-        console.log(`Navigating to ${combo.url}`);
-        await page.goto(combo.url, { waitUntil: 'networkidle0' });
+    for (const config of configurations) {
+        const url = getWorksheetUrl('operations-vertical', config.params);
+        console.log(`Navigating to ${url}`);
+        await page.goto(url, { waitUntil: 'networkidle0' });
 
-        console.log(`Generating PDF for: ${combo.filename}`);
-        const pdfPath = resolve(TEMP_DIR, combo.filename);
+        console.log(`Generating PDF for: ${config.filename}`);
+        const pdfPath = resolve(TEMP_DIR, config.filename);
         await page.pdf({
             path: pdfPath,
             format: 'A4',
