@@ -7,42 +7,48 @@ const operatorSymbols = {
     multiply: '×',
     divide: '÷'
 };
-export function generateProblem(op, digits) {
+
+export function generateProblem(op, {maxArg1, maxArg2}) {
     let num1, num2, answer;
-    const maxNum = Math.pow(10, digits) - 1;
-    const minNum = Math.pow(10, digits - 1) || 0;
+    const maxNum1 = Math.pow(10, maxArg1) - 1;
+    const minNum1 = Math.pow(10, maxArg1 - 1) || 0;
+
+    const maxNum2 = Math.pow(10, maxArg2) - 1;
+    const minNum2 = Math.pow(10, maxArg2 - 1) || 0;
 
     switch (op) {
         case 'subtract':
-            num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-            num2 = Math.floor(Math.random() * num1) + 1; // Ensure num2 <= num1 for non-negative result
+            num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
+            const maxSubtracted = Math.min(num1, maxNum2)
+            num2 = Math.floor(Math.random() * maxSubtracted) + 1;
             answer = num1 - num2;
             break;
 
         case 'multiply':
-            const factor1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-            const factor2Max = Math.min(maxNum, 9);
-            const factor2 = Math.floor(Math.random() * factor2Max) + 1;
+            const factor1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
+            const factor2 = Math.floor(Math.random() * maxNum2) + 1;
             num1 = factor1;
             num2 = factor2;
             answer = num1 * num2;
             break;
 
         case 'divide':
-            const divisorMax = Math.min(maxNum, 9);
-            const divisor = Math.floor(Math.random() * (divisorMax - 2)) + 2; // Avoid 0, 1
-            const quotientMax = Math.floor(maxNum / divisor);
-            const quotient = Math.floor(Math.random() * (quotientMax - 1)) + 1;
+            let divisor, quotient;
 
-            num1 = divisor * quotient; // This is the dividend
-            num2 = divisor;
-            answer = quotient;
+            do {
+                divisor = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
+                const maxQuotient = Math.floor(maxNum1 / divisor);
+                quotient = Math.floor(Math.random() * maxQuotient);
+            } while (1 >= divisor || 1 >= quotient);
+            answer = quotient
+            num1 = quotient * divisor
+            num2 = divisor
             break;
 
         case 'add':
         default:
-            num1 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
-            num2 = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+            num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
+            num2 = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
             answer = num1 + num2;
             break;
     }
@@ -59,7 +65,7 @@ export function generateProblemSet(config) {
 
         let problem, problemKey;
         do {
-            problem = generateProblem(currentOperator, config.maxDigits);
+            problem = generateProblem(currentOperator, config);
             // Make the key unique for mixed mode (e.g., "10-5" is different from "10+5")
             problemKey = `${problem.num1},${currentOperator},${problem.num2}`;
         } while (existingProblemKeys.has(problemKey));
