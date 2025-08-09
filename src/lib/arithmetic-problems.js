@@ -11,8 +11,7 @@ const operatorSymbols = {
 export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}) {
     const num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
     const maxSubtracted = Math.min(num1, maxNum2)
-    const minSubtracted = Math.max(1, Math.min(maxSubtracted, maxNum2))
-    const num2 = Math.floor(Math.random() * (maxSubtracted - minNum2)) + minNum2;
+    const num2 = Math.floor(Math.random() * (maxSubtracted - minNum2 + 1)) + minNum2;
     const answer = num1 - num2;
     return {num1, num2, answer}
 }
