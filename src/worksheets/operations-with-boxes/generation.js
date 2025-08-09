@@ -172,6 +172,12 @@ function generateMixedMultiplyDivide() {
             blankPart: 'random',
             count: DEFAULT_COUNT
         });
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: 1,
+            blankPart: 'operator',
+            count: DEFAULT_COUNT
+        });
     }
     return permutations;
 }
@@ -182,14 +188,18 @@ function generateMixedAll() {
         permutations.push({
             digitsNum1: i,
             digitsNum2: 1,
-            operations: 'add,subtract,multiply,divide',
-            blankPart: 'random',
+            blankPart: 'answers',
             count: DEFAULT_COUNT
         });
         permutations.push({
             digitsNum1: i,
             digitsNum2: 1,
-            operations: 'add,subtract,multiply,divide',
+            blankPart: 'operator',
+            count: DEFAULT_COUNT
+        });
+        permutations.push({
+            digitsNum1: i,
+            digitsNum2: 1,
             blankPart: 'random',
             count: DEFAULT_COUNT
         });
@@ -210,8 +220,8 @@ function generatePermutations() {
 }
 
 function generateName(params) {
-    const {digitsNum1, digitsNum2, operations, allowNegatives} = params;
-    let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_${operations.replaceAll(',', '-')}`;
+    const {digitsNum1, digitsNum2, operations = 'all', allowNegatives, blankPart = 'answer'} = params;
+    let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_hide_${blankPart}_for_${operations.replaceAll(',', '-')}`;
     if (allowNegatives) {
         name += '_neg';
     }
