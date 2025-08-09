@@ -34,7 +34,8 @@
 .problem .symbol {
     font-size: 1.8rem;
     font-weight: 700;
-    padding: 0 10px;
+    width: 50px;
+    text-align: center;
 }
 
 .answer-box {
