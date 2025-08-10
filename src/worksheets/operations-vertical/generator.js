@@ -6,14 +6,18 @@ function generateAdditionPermutations() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: i,
-            operations: 'add',
+            params: {
+                digitsNum1: i,
+                digitsNum2: i,
+                operations: 'add',
+            },
             count: DEFAULT_COUNT
         });
     }
     permutations.push({
-        operations: 'add',
+        params: {
+            operations: 'add',
+        },
         count: DEFAULT_COUNT
     });
     return permutations;
@@ -23,27 +27,35 @@ function generateSubtractionPermutations() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: i,
-            operations: 'subtract',
+            params: {
+                digitsNum1: i,
+                digitsNum2: i,
+                operations: 'subtract'
+            },
             count: DEFAULT_COUNT
         });
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: i,
-            operations: 'subtract',
+            params: {
+                digitsNum1: i,
+                digitsNum2: i,
+                operations: 'subtract',
+                allowNegatives: 1
+            },
             count: DEFAULT_COUNT,
-            allowNegatives: 1
         });
     }
     permutations.push({
-        operations: 'subtract',
+        params: {
+            operations: 'subtract',
+        },
         count: DEFAULT_COUNT
     });
     permutations.push({
-        operations: 'subtract',
-        count: DEFAULT_COUNT,
-        allowNegatives: 1
+        params: {
+            operations: 'subtract',
+            allowNegatives: 1
+        },
+        count: DEFAULT_COUNT
     });
     return permutations;
 }
@@ -52,9 +64,11 @@ function generateDivisionPermutations() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: 1,
-            operations: 'divide',
+            params: {
+                digitsNum1: i,
+                digitsNum2: 1,
+                operations: 'divide'
+            },
             count: DEFAULT_COUNT
         });
     }
@@ -65,9 +79,11 @@ function generateMultiplicationPermutations() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: 1,
-            operations: 'multiply',
+            params: {
+                digitsNum1: i,
+                digitsNum2: 1,
+                operations: 'multiply',
+            },
             count: DEFAULT_COUNT
         });
     }
@@ -78,14 +94,18 @@ function generateMixedAddSubtract() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: i,
-            operations: 'add,subtract',
+            params: {
+                digitsNum1: i,
+                digitsNum2: i,
+                operations: 'add,subtract',
+            },
             count: DEFAULT_COUNT
         });
     }
     permutations.push({
-        operations: 'add,subtract',
+        params: {
+            operations: 'add,subtract'
+        },
         count: DEFAULT_COUNT
     });
     return permutations;
