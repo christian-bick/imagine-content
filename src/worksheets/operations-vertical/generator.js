@@ -95,9 +95,11 @@ function generateMixedMultiplyDivide() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: 1,
-            operations: 'multiply,divide',
+            params: {
+                digitsNum1: i,
+                digitsNum2: 1,
+                operations: 'multiply,divide',
+            },
             count: DEFAULT_COUNT
         });
     }
@@ -106,11 +108,11 @@ function generateMixedMultiplyDivide() {
 
 function generatePermutations() {
     return [
-        ...generateAdditionPermutations(),
-        ...generateSubtractionPermutations(),
-        ...generateDivisionPermutations(),
-        ...generateMultiplicationPermutations(),
-        ...generateMixedAddSubtract(),
+        //...generateAdditionPermutations(),
+        //...generateSubtractionPermutations(),
+        //...generateDivisionPermutations(),
+        //...generateMultiplicationPermutations(),
+        //...generateMixedAddSubtract(),
         ...generateMixedMultiplyDivide()
     ];
 }
@@ -124,7 +126,7 @@ function generateName(params) {
     return name;
 }
 
-export const config = {
+export default {
     generatePermutations,
     generateName,
 }

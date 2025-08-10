@@ -186,21 +186,27 @@ function generateMixedAll() {
     const permutations = [];
     for (let i = 1; i <= 3; i++) {
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: 1,
-            blankPart: 'answers',
+            params: {
+                digitsNum1: i,
+                digitsNum2: 1,
+                blankPart: 'answers',
+            },
             count: DEFAULT_COUNT
         });
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: 1,
-            blankPart: 'operator',
+            params: {
+                digitsNum1: i,
+                digitsNum2: 1,
+                blankPart: 'operator',
+            },
             count: DEFAULT_COUNT
         });
         permutations.push({
-            digitsNum1: i,
-            digitsNum2: 1,
-            blankPart: 'random',
+            params: {
+                digitsNum1: i,
+                digitsNum2: 1,
+                blankPart: 'random',
+            },
             count: DEFAULT_COUNT
         });
     }
@@ -228,7 +234,7 @@ function generateName(params) {
     return name;
 }
 
-export const config = {
+export default {
     generatePermutations,
     generateName,
 }
