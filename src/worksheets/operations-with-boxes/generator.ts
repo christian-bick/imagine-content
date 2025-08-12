@@ -52,8 +52,8 @@ function generateLabels(params: { [key: string]: any }) {
         Scope.ArabicNumerals,
         Scope.Base10,
         Scope.NumbersWithoutZero,
+        withNegativesScope(params.allowNegatives),
         ...numScopes([params.digitsNum1 || 3, params.digitsNum2 || 3]),
-        ...withNegativesScope(params.allowNegatives),
     ]
 
     const areas = params.operations.split(',').map((op: string) => {
