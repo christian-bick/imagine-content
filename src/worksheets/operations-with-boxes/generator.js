@@ -1,245 +1,39 @@
 // --- PERMUTATION GENERATORS ---
 
-function generateAdditionPermutations() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add',
-                blankPart: 'answer'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add',
-                blankPart: 'problem'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add',
-                blankPart: 'problem-answer'
-            }
-        });
-    }
-    permutations.push({
-        params: {
-            operations: 'add',
-            blankPart: 'answer'
-        }
-    });
-    permutations.push({
-        params: {
-            operations: 'add',
-            blankPart: 'problem',
-        }
-    });
-    permutations.push({
-        params: {
-            operations: 'add',
-            blankPart: 'problem-answer',
-        }
-    });
-    return permutations;
-}
-
-function generateSubtractionPermutations() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'subtract',
-                blankPart: 'answer'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add',
-                blankPart: 'subtract'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'subtract',
-                blankPart: 'problem-answer'
-            }
-        });
-    }
-    permutations.push({
-        params: {
-            operations: 'subtract',
-            blankPart: 'answer'
-        }
-    });
-    permutations.push({
-        params: {
-            operations: 'subtract',
-            blankPart: 'problem'
-        }
-    });
-    permutations.push({
-        params: {
-            operations: 'subtract',
-            blankPart: 'problem-answer'
-        }
-    });
-    return permutations;
-}
-
-function generateDivisionPermutations() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                operations: 'divide'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                operations: 'divide',
-                blankPart: 'problem-answer'
-            }
-        });
-    }
-    return permutations;
-}
-
-function generateMultiplicationPermutations() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                operations: 'multiply'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                operations: 'problem-answer'
-            }
-        });
-    }
-    return permutations;
-}
-
-function generateMixedAddSubtract() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add,subtract',
-                blankPart: 'answer'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add,subtract',
-                blankPart: 'problem'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add,subtract',
-                blankPart: 'problem-answer'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: i,
-                operations: 'add,subtract',
-                blankPart: 'random'
-            }
-        });
-    }
-    return permutations;
-}
-
-function generateMixedMultiplyDivide() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                operations: 'multiply,divide',
-                blankPart: 'random'
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                blankPart: 'operator'
-            }
-        });
-    }
-    return permutations;
-}
-
-function generateMixedAll() {
-    const permutations = [];
-    for (let i = 1; i <= 3; i++) {
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                blankPart: 'answers',
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                blankPart: 'operator',
-            }
-        });
-        permutations.push({
-            params: {
-                digitsNum1: i,
-                digitsNum2: 1,
-                blankPart: 'random',
-            }
-        });
-    }
-    return permutations;
-}
+import PermutationBuilder from "../../lib/permutation-builder.js";
 
 function generatePermutations() {
     return [
-        //...generateAdditionPermutations(),
-        //...generateSubtractionPermutations(),
-        //...generateDivisionPermutations(),
-        //...generateMultiplicationPermutations(),
-        //...generateMixedAddSubtract(),
-        //...generateMixedMultiplyDivide(),
-        ...generateMixedAll(),
-    ];
+        // Same operations with same problem digits
+        ...new PermutationBuilder()
+            .applyRange(['digitsNum1', "digitsNum2"], [1, 3])
+            .applyVariants('operations', ['add', 'subtract', 'multiply', 'divide'])
+            .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'random'])
+            .applyVariants('allowNegatives', ['false', 'true'])
+            .build(),
+
+        // Same operations with random problem digits
+        ...new PermutationBuilder()
+            .applyVariants('operations', ['add', 'subtract', 'multiply', 'divide'])
+            .applyVariants('blankPart', ['answer', 'problem', 'problem-answer'])
+            .applyVariants('allowNegatives', ['false', 'true'])
+            .build(),
+
+        // Mixed operations with same digits
+        ...new PermutationBuilder()
+            .applyRange(['digitsNum1', "digitsNum2"], [1, 3])
+            .applyVariants('operations', ['add,subtract', 'multiply,divide', 'add,subtract,multiply', 'add,subtract,multiply,divide'])
+            .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'operator', 'random'])
+            .applyVariants('allowNegatives', ['false', 'true'])
+            .build(),
+
+        // Mixed operations with random digits
+        ...new PermutationBuilder()
+            .applyVariants('operations', ['add,subtract', 'multiply,divide', 'add,subtract,multiply', 'add,subtract,multiply,divide'])
+            .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'operator', 'random'])
+            .applyVariants('allowNegatives', ['false', 'true'])
+            .build(),
+    ]
 }
 
 function generateName(params) {

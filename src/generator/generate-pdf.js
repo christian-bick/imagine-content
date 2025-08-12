@@ -61,6 +61,9 @@ async function generatePdfs() {
 
     const configGenerator = await loadConfigGenerator(moduleName);
     const configurations = generateConfigs(moduleName, configGenerator);
+    console.log(configurations)
+
+    return
 
     console.log('Launching browser...');
     const browser = await puppeteer.launch({headless: "new"});

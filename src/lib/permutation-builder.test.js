@@ -1,0 +1,104 @@
+import {describe, it, expect} from 'vitest';
+
+import PermutationBuilder from './permutation-builder.js';
+
+describe('PermutationBuilder', () => {
+    it('should return an empty object permutation by default', () => {
+        const builder = new PermutationBuilder();
+        expect(builder.build()).toEqual([{params: {}}]);
+    });
+
+    it('should apply a single range correctly', () => {
+        const builder = new PermutationBuilder()
+            .applyRange(['digitsNum1'], [1, 2]);
+        expect(builder.build()).toEqual([
+            {params: {digitsNum1: 1}},
+            {params: {digitsNum1: 2}},
+        ]);
+    });
+
+    it('should apply multiple keys in a range correctly', () => {
+        const builder = new PermutationBuilder()
+            .applyRange(['digitsNum1', 'digitsNum2'], [1, 2]);
+        expect(builder.build()).toEqual([
+            {params: {digitsNum1: 1, digitsNum2: 1}},
+            {params: {digitsNum1: 2, digitsNum2: 2}},
+        ]);
+    });
+
+    it('should apply variants correctly', () => {
+        const builder = new PermutationBuilder()
+            .applyVariants('operations', ['add', 'subtract']);
+        expect(builder.build()).toEqual([
+            {params: {operations: 'add'}},
+            {params: {operations: 'subtract'}},
+        ]);
+    });
+
+    it('should chain applyRange and applyVariants correctly', () => {
+        const builder = new PermutationBuilder()
+            .applyRange(['digitsNum1'], [1, 2])
+            .applyVariants('operations', ['add', 'subtract']);
+        expect(builder.build()).toEqual([
+            {params: {digitsNum1: 1, operations: 'add'}},
+            {params: {digitsNum1: 1, operations: 'subtract'}},
+            {params: {digitsNum1: 2, operations: 'add'}},
+            {params: {digitsNum1: 2, operations: 'subtract'}},
+        ]);
+    });
+
+    it('should chain applyVariants and applyRange correctly', () => {
+        const builder = new PermutationBuilder()
+            .applyVariants('operations', ['add', 'subtract'])
+            .applyRange(['digitsNum1'], [1, 2]);
+        expect(builder.build()).toEqual([
+            {params: {operations: 'add', digitsNum1: 1}},
+            {params: {operations: 'add', digitsNum1: 2}},
+            {params: {operations: 'subtract', digitsNum1: 1}},
+            {params: {operations: 'subtract', digitsNum1: 2}},
+        ]);
+    });
+
+    it('should handle multiple applyRange calls', () => {
+        const builder = new PermutationBuilder()
+            .applyRange(['digitsNum1'], [1, 2])
+            .applyRange(['digitsNum2'], [3, 4]);
+        expect(builder.build()).toEqual([
+            {params: {digitsNum1: 1, digitsNum2: 3}},
+            {params: {digitsNum1: 1, digitsNum2: 4}},
+            {params: {digitsNum1: 2, digitsNum2: 3}},
+            {params: {digitsNum1: 2, digitsNum2: 4}},
+        ]);
+    });
+
+    it('should handle multiple applyVariants calls', () => {
+        const builder = new PermutationBuilder()
+            .applyVariants('operations', ['add', 'subtract'])
+            .applyVariants('blankPart', ['answer', 'problem']);
+        expect(builder.build()).toEqual([
+            {params: {operations: 'add', blankPart: 'answer'}},
+            {params: {operations: 'add', blankPart: 'problem'}},
+            {params: {operations: 'subtract', blankPart: 'answer'}},
+            {params: {operations: 'subtract', blankPart: 'problem'}},
+        ]);
+    });
+
+    it('should handle empty range', () => {
+        const builder = new PermutationBuilder()
+            .applyRange(['digitsNum1'], [1, 0]); // Invalid range
+        expect(builder.build()).toEqual([]);
+    });
+
+    it('should handle empty variants', () => {
+        const builder = new PermutationBuilder()
+            .applyVariants('operations', []);
+        expect(builder.build()).toEqual([]);
+    });
+
+    it('should handle initial empty permutations array', () => {
+        const builder = new PermutationBuilder();
+        builder.permutations = []; // Simulate an empty initial state
+        builder.applyRange(['digitsNum1'], [1, 2]);
+        expect(builder.build()).toEqual([]);
+    });
+});
