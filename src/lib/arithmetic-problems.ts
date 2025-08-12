@@ -11,7 +11,7 @@ const operatorSymbols: { [key: string]: string } = {
 export interface Problem {
     num1: number;
     num2: number;
-    answer: number | string;
+    answer: number;
     symbol?: string;
 }
 
