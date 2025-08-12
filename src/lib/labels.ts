@@ -12,34 +12,34 @@ export function numScopes(numDigitList: number[]) {
     const maxDigits = Math.max(...numDigitList)
     const minDigits = Math.min(...numDigitList)
     return [
-        ...minScopes(minDigits),
-        ...maxScopes(maxDigits),
+        ...minScope(minDigits),
+        ...maxScope(maxDigits),
     ]
 }
 
-export function minScopes(minDigits: number) {
+export function minScope(minDigits: number) {
     switch (minDigits) {
         case 0:
         case 1:
             return []
         case 2:
-            return Scope.NumbersLarger10
+            return [Scope.NumbersLarger10]
         case 3:
-            return Scope.NumbersLarger100
+            return [Scope.NumbersLarger100]
         default:
-            return Scope.NumbersLarger1000
+            return [Scope.NumbersLarger1000]
     }
 }
 
-export function maxScopes(maxDigits: number) {
+export function maxScope(maxDigits: number) {
     switch (maxDigits) {
         case 0:
         case 1:
-            return Scope.NumbersSmaller10
+            return [Scope.NumbersSmaller10]
         case 2:
-            return Scope.NumbersSmaller100
+            return [Scope.NumbersSmaller100]
         case 3:
-            return Scope.NumbersSmaller1000
+            return [Scope.NumbersSmaller1000]
         default:
             return []
     }
