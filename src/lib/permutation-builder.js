@@ -23,6 +23,21 @@ export default class PermutationBuilder {
         return this
     }
 
+    applyParams(params) {
+        const newPermutations = []
+        for (const permutation of this.permutations) {
+            newPermutations.push({
+                ...permutation,
+                params: {
+                    ...permutation.params,
+                    ...params
+                }
+            })
+        }
+        this.permutations = newPermutations
+        return this
+    }
+
     applyVariants(key, values) {
         const newPermutations = []
         for (const permutation of this.permutations) {

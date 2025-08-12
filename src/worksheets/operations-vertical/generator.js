@@ -1,5 +1,7 @@
 // --- PERMUTATION GENERATORS ---
 
+import PermutationBuilder from "../../lib/permutation-builder.js";
+
 function generateAdditionPermutations() {
     const permutations = [];
     for (let i = 2; i <= 5; i++) {
@@ -115,13 +117,19 @@ function generateMixedMultiplyDivide() {
 
 function generatePermutations() {
     return [
-        //...generateAdditionPermutations(),
-        //...generateSubtractionPermutations(),
-        //...generateDivisionPermutations(),
-        //...generateMultiplicationPermutations(),
-        //...generateMixedAddSubtract(),
-        ...generateMixedMultiplyDivide()
-    ];
+        // Same operations with same problem digits
+        ...new PermutationBuilder()
+            .applyRange(['digitsNum1', "digitsNum2"], [2, 5])
+            .applyVariants('operations', ['add', 'subtract'])
+            .applyVariants('allowNegatives', ['false', 'true'])
+            .build(),
+
+        ...new PermutationBuilder()
+            .applyParams({digitsNum2: 1})
+            .applyRange(['digitsNum1'], [2, 5])
+            .applyVariants('operations', ['multiply', 'divide'])
+            .build(),
+    ]
 }
 
 function generateName(params) {
