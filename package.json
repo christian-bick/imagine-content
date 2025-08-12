@@ -21,6 +21,6 @@
     "vite-plugin-handlebars": "^2.0.0"
   },
   "dependencies": {
-    "edugraph-ts": "https://github.com/christian-bick/edugraph-ontology/releases/download/v0.3.0/edugraph-ts.tgz"
+    "edugraph-ts": "https://github.com/christian-bick/edugraph-ontology/releases/download/v0.3.1/edugraph-ts.tgz"
   }
 }
