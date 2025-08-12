@@ -1,22 +1,22 @@
 import "../style.css"
 import "./worksheet.css"
-import {getParams} from "../../lib/params.js";
-import {generateProblemSet} from "../../lib/arithmetic-problems.js"
+import {getParams} from "../../lib/params.ts";
+import {generateProblemSet, Problem} from "../../lib/arithmetic-problems.ts"
 
 function getConfig() {
     const params = getParams(['operations', 'digitsNum1', 'digitsNum2', 'allowNegatives'])
     return {
         operations: params.operations ? params.operations.split(',') : [],
-        digitsNum1: parseInt(params.digitsNum1, 10) || 0,
-        digitsNum2: parseInt(params.digitsNum2, 10) || 0,
-        allowNegatives: params.allowNegatives && (params.allowNegatives === "true" || parseInt(params.allowNegatives) === 1),
+        digitsNum1: parseInt(params.digitsNum1 || '0', 10),
+        digitsNum2: parseInt(params.digitsNum2 || '0', 10),
+        allowNegatives: params.allowNegatives === 'true' || params.allowNegatives === '1',
         maxDigits: 5,
         problemCount: 15
     }
 }
 
 // --- HTML GENERATION HELPER ---
-function createProblemHTML(problem) {
+function createProblemHTML(problem: Problem) {
     return `
         <div class="problem">
             <span class="number">${problem.num1}</span>
@@ -35,13 +35,15 @@ const problemSet = generateProblemSet(config)
 const problemsContainer = document.getElementById('problems-container');
 const answersContainer = document.getElementById('answers-container');
 
-for (const [index, problem] of problemSet.entries()) {
-    // For the first problem (i=0), show the answer. Otherwise, leave it blank.
-    const answerForWorksheet = (index === 0) ? problem.answer : '';
+if (problemsContainer && answersContainer) {
+    for (const [index, problem] of problemSet.entries()) {
+        // For the first problem (i=0), show the answer. Otherwise, leave it blank.
+        const answerForWorksheet = (index === 0) ? problem.answer : '';
 
-    const problemHTML = createProblemHTML({...problem, answer: answerForWorksheet});
-    const answerHTML = createProblemHTML({...problem});
+        const problemHTML = createProblemHTML({...problem, answer: answerForWorksheet});
+        const answerHTML = createProblemHTML({...problem});
 
-    problemsContainer.innerHTML += problemHTML;
-    answersContainer.innerHTML += answerHTML;
+        problemsContainer.innerHTML += problemHTML;
+        answersContainer.innerHTML += answerHTML;
+    }
 }

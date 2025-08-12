@@ -1,6 +1,6 @@
 import {Scope} from "edugraph-ts";
 
-export function withNegativesScope(withNegatives) {
+export function withNegativesScope(withNegatives: boolean) {
     if (withNegatives) {
         return Scope.NumbersWithNegatives
     } else {
@@ -8,7 +8,7 @@ export function withNegativesScope(withNegatives) {
     }
 }
 
-export function numScopes(numDigitList) {
+export function numScopes(numDigitList: number[]) {
     const maxDigits = Math.max(...numDigitList)
     const minDigits = Math.min(...numDigitList)
     return [
@@ -17,7 +17,7 @@ export function numScopes(numDigitList) {
     ]
 }
 
-export function minScopes(minDigits) {
+export function minScopes(minDigits: number) {
     switch (minDigits) {
         case 0:
         case 1:
@@ -31,7 +31,7 @@ export function minScopes(minDigits) {
     }
 }
 
-export function maxScopes(maxDigits) {
+export function maxScopes(maxDigits: number) {
     switch (maxDigits) {
         case 0:
         case 1:

@@ -1,6 +1,6 @@
 import {describe, it, expect} from 'vitest';
 
-import PermutationBuilder from './permutation-builder.js';
+import PermutationBuilder from './permutation-builder.ts';
 
 describe('PermutationBuilder', () => {
     it('should return an empty object permutation by default', () => {

@@ -1,12 +1,20 @@
+interface Permutation {
+    params: { [key: string]: any };
+}
+
 export default class PermutationBuilder {
 
-    permutations = [{ params: {}}]
+    permutations: Permutation[] = [{ params: {}}]
 
-    applyRange(keys, range) {
-        const newPermutations = []
+    applyRange(keys: string[], range: [number, number]): this {
+        const newPermutations: Permutation[] = []
+        if (range[0] > range[1]) {
+            this.permutations = [];
+            return this;
+        }
         for (const permutation of this.permutations) {
             for (let i = range[0]; i <= range[1]; i++) {
-                const params = {};
+                const params: { [key: string]: any } = {};
                 for (const key of keys) {
                     params[key] = i;
                 }
@@ -23,8 +31,8 @@ export default class PermutationBuilder {
         return this
     }
 
-    applyParams(params) {
-        const newPermutations = []
+    applyParams(params: { [key: string]: any }): this {
+        const newPermutations: Permutation[] = []
         for (const permutation of this.permutations) {
             newPermutations.push({
                 ...permutation,
@@ -38,8 +46,8 @@ export default class PermutationBuilder {
         return this
     }
 
-    applyVariants(key, values) {
-        const newPermutations = []
+    applyVariants(key: string, values: any[]): this {
+        const newPermutations: Permutation[] = []
         for (const permutation of this.permutations) {
             for (const value of values) {
                 newPermutations.push({
@@ -55,7 +63,7 @@ export default class PermutationBuilder {
         return this;
     }
 
-    build() {
+    build(): Permutation[] {
         return this.permutations
     }
 }

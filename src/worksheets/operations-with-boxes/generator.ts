@@ -1,8 +1,8 @@
 // --- PERMUTATION GENERATORS ---
 
-import PermutationBuilder from "../../lib/permutation-builder.js";
+import PermutationBuilder from "../../lib/permutation-builder.ts";
 import {Area, Scope, Ability} from "edugraph-ts";
-import {numScopes, withNegativesScope} from "../../lib/labels.js";
+import {numScopes, withNegativesScope} from "../../lib/labels.ts";
 
 function generatePermutations() {
     return [
@@ -38,7 +38,7 @@ function generatePermutations() {
     ]
 }
 
-function generateName(params) {
+function generateName(params: { [key: string]: any }) {
     const {digitsNum1, digitsNum2, operations = 'all', allowNegatives, blankPart = 'answer'} = params;
     let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_hide_${blankPart}_for_${operations.replaceAll(',', '-')}`;
     if (allowNegatives) {
@@ -47,18 +47,18 @@ function generateName(params) {
     return name;
 }
 
-function generateLabels(params) {
+function generateLabels(params: { [key: string]: any }) {
     const scopes = [
         Scope.ArabicNumerals,
         Scope.NumberRepresentation,
         Scope.Base10,
         Scope.NumbersWithoutZero,
-        ...numScopes([params.digitsNum1 || 3], [params.digitsNum2 || 3]),
+        ...numScopes([params.digitsNum1 || 3, params.digitsNum2 || 3]),
         ...withNegativesScope(params.allowNegatives),
     ]
 
-    const areas = params.operations.split(',').map(op => {
-        const mapping = {
+    const areas = params.operations.split(',').map((op: string) => {
+        const mapping: { [key: string]: Area } = {
             add: Area.IntegerAdditon,
             subtract: Area.IntegerSubtraction,
             divide: Area.IntegerDivision,

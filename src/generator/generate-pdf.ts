@@ -12,8 +12,21 @@ const PROJECT_ROOT = resolve(__dirname, '..', '..');
 const TEMP_DIR = resolve(PROJECT_ROOT, 'temp');
 const BASE_URL = 'http://localhost:5173';
 
-async function loadConfigGenerator(moduleName) {
-    const configGenerationPath = `../worksheets/${moduleName}/generator.js`;
+interface Generator {
+    generatePermutations: () => { params: any }[];
+    generateName: (params: any) => string;
+    generateLabels: (params: any) => any;
+}
+
+interface Config {
+    filename: string;
+    params: any;
+    labels: any;
+    id?: string;
+}
+
+async function loadConfigGenerator(moduleName: string): Promise<Generator> {
+    const configGenerationPath = `../worksheets/${moduleName}/generator.ts`;
     try {
         const { default: generator } = await import(configGenerationPath);
         return generator
@@ -24,17 +37,17 @@ async function loadConfigGenerator(moduleName) {
     }
 }
 
-function getRelativeWorksheetUrl(moduleName, params) {
+function getRelativeWorksheetUrl(moduleName: string, params: any): string {
     const urlParams = new URLSearchParams(params);
     return `/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`; // No /src/... needed because of vite
 }
 
-function getWorksheetUrl(moduleName, params) {
+function getWorksheetUrl(moduleName: string, params: any): string {
     return `${BASE_URL}${getRelativeWorksheetUrl(moduleName, params)}`;
 }
 
-export function generateConfigs(moduleName, generator) {
-    const expandedConfigs = [];
+export function generateConfigs(moduleName: string, generator: Generator): Config[] {
+    const expandedConfigs: Config[] = [];
     const permutations = generator.generatePermutations();
     for (const perm of permutations) {
         const {params} = perm; // Extract labels here
@@ -61,7 +74,7 @@ async function generatePdfs() {
     console.log(`Generating PDFs for module: ${moduleName}`);
 
     const configGenerator = await loadConfigGenerator(moduleName);
-    const configurations = generateConfigs(moduleName, configGenerator);
+    const configurations: Config[] = generateConfigs(moduleName, configGenerator);
 
     const isDryRun = args.includes('--dry');
     if (isDryRun) {
@@ -71,7 +84,7 @@ async function generatePdfs() {
     }
 
     console.log('Launching browser...');
-    const browser = await puppeteer.launch({headless: "new"});
+    const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
 
     // Ensure the temp directory exists

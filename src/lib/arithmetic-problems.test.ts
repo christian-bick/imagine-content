@@ -3,7 +3,7 @@ import {
     generateAddition,
     generateDivision,
     generateMultiplication
-} from './arithmetic-problems.js';
+} from './arithmetic-problems.ts';
 import {describe, it, expect, vi, afterEach} from 'vitest';
 
 describe('generateSubtraction', () => {
@@ -373,7 +373,7 @@ describe('generateDivision', () => {
             .mockReturnValueOnce(0)      // Will produce divisor = -5.
             .mockReturnValueOnce(0.5);   // With maxQuotient=-10, will produce quotient = -5.
 
-        const config = {maxNum1: 50, minNum2: -5, maxNum2: -2};
+                const config = {minNum1: 10, maxNum1: 50, minNum2: -5, maxNum2: -2};
         const {num1, num2, answer} = generateDivision(config);
 
         expect(num2).toBe(-5);   // divisor
