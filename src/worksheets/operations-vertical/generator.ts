@@ -1,6 +1,8 @@
 // --- PERMUTATION GENERATORS ---
 
 import PermutationBuilder from "../../lib/permutation-builder.ts";
+import {Ability, Area, Scope} from "edugraph-ts";
+import {numScopes, withNegativesScope} from "../../lib/labels.ts";
 
 function generatePermutations() {
     return [
@@ -28,8 +30,31 @@ function generateName(params: { [key: string]: any }) {
     return name;
 }
 
-function generateLabels() {
-    return {}
+function generateLabels(params: { [key: string]: any }) {
+    const scopes = [
+        Scope.ArabicNumerals,
+        Scope.NumberRepresentation,
+        Scope.Base10,
+        Scope.NumbersWithoutZero,
+        ...numScopes([params.digitsNum1 || 5, params.digitsNum2 || 5]),
+        ...withNegativesScope(params.allowNegatives),
+    ]
+
+    const areas = params.operations.split(',').map((op: string) => {
+        const mapping: { [key: string]: Area } = {
+            add: Area.IntegerAdditon,
+            subtract: Area.IntegerSubtraction,
+            divide: Area.IntegerDivision,
+            multiply: Area.IntegerMultiplication
+        }
+        return mapping[op]
+    })
+
+    return {
+        Ability: [Ability.ProcedureMemorization, Ability.ProcedureExecution],
+        Scope: scopes,
+        Area: areas
+    }
 }
 
 export default {
