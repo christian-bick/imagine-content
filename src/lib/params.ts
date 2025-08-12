@@ -6,3 +6,12 @@ export function getParams(keys: string[]): { [key: string]: string | null } {
     }
     return params
 }
+
+export function getSortedUrlSearchParams(params: URLSearchParams): string {
+    const sortedParams = Array.from(params.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    const newParams = new URLSearchParams();
+    for (const [key, value] of sortedParams) {
+        newParams.append(key, value);
+    }
+    return newParams.toString();
+}

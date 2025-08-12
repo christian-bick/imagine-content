@@ -3,6 +3,7 @@ import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
 import {createHash} from 'crypto';
+import {getSortedUrlSearchParams} from "../lib/params.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,7 +39,10 @@ async function loadConfigGenerator(moduleName: string): Promise<Generator> {
 
 function getRelativeWorksheetUrl(moduleName: string, params: any): string {
     const urlParams = new URLSearchParams(params);
-    return `/worksheets/${moduleName}/worksheet.html?${urlParams.toString()}`; // No /src/... needed because of vite
+
+    // No /src/... needed in path because of vite
+    // We sort the url params to identify identical generation calls
+    return `/worksheets/${moduleName}/worksheet.html?${getSortedUrlSearchParams(urlParams)}`;
 }
 
 function getWorksheetUrl(moduleName: string, params: any): string {
