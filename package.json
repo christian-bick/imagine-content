@@ -8,10 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "generate:pdf:vertical": "ts-node src/generator/generate-pdf.ts operations-vertical",
-    "generate:pdf:vertical:dry": "ts-node src/generator/generate-pdf.ts operations-vertical --dry",
-    "generate:pdf:boxes": "ts-node src/generator/generate-pdf.ts operations-with-boxes",
-    "generate:pdf:boxes:dry": "ts-node src/generator/generate-pdf.ts operations-with-boxes --dry"
+    "generate:pdf:vertical": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-vertical",
+    "generate:pdf:vertical:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-vertical --dry",
+    "generate:pdf:boxes": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-with-boxes",
+    "generate:pdf:boxes:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-with-boxes --dry"
   },
   "devDependencies": {
     "glob": "^11.0.3",
@@ -23,6 +23,6 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "edugraph-ts": "https://github.com/christian-bick/edugraph-ontology/releases/download/v0.3.1/edugraph-ts.tgz"
+    "edugraph-ts": "https://github.com/christian-bick/edugraph-ontology/releases/download/v0.3.2/pdf-box-ts.tgz"
   }
 }
