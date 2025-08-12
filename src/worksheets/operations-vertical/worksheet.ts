@@ -1,4 +1,3 @@
-import "../style.css"
 import "./worksheet.scss"
 import {getParams} from "../../lib/params.ts";
 import {generateProblemSet, Problem} from "../../lib/arithmetic-problems.ts"

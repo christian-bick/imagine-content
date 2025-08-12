@@ -1,4 +1,6 @@
 /* Page break for printing */
+@import "../base";
+
 .page.answer-key {
     page-break-before: always;
 }
