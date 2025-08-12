@@ -80,9 +80,11 @@ async function generatePdfs() {
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
 
-    // Ensure the temp directory exists
-    if (!existsSync(OUT_DIR)) {
-        mkdirSync(OUT_DIR);
+    const moduleOutputDir = resolve(OUT_DIR, moduleName);
+
+    // Ensure the module-specific output directory exists
+    if (!existsSync(moduleOutputDir)) {
+        mkdirSync(moduleOutputDir, { recursive: true });
     }
 
     for (const config of configurations) {
@@ -95,7 +97,7 @@ async function generatePdfs() {
             await page.goto(url, {waitUntil: 'networkidle0'});
 
             console.log(`Generating PDF for: ${config.filename}`);
-            const pdfPath = resolve(OUT_DIR, config.filename);
+            const pdfPath = resolve(moduleOutputDir, config.filename);
             await page.pdf({
                 path: pdfPath,
                 format: 'A4',
@@ -117,17 +119,19 @@ async function generatePdfs() {
 
     // --- METADATA GENERATION ---
     console.log('Generating meta file...');
+    const creationTimestamp = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
     const metaForJson = configurations.map(c => {
         const urlPath = getRelativeWorksheetUrl(moduleName, c.params);
         return {
             hash: c.hash,
             filename: c.filename,
             source: urlPath,
-            labels: c.labels
+            created: creationTimestamp,
+            labels: c.labels,
         };
     });
 
-    const metaPath = resolve(OUT_DIR, `meta_${moduleName}.json`);
+    const metaPath = resolve(moduleOutputDir, `meta.json`);
     writeFileSync(metaPath, JSON.stringify(metaForJson, null, 2));
     console.log(`Meta file generated at: ${metaPath}`);
 }
