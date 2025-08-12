@@ -50,7 +50,6 @@ function generateName(params: { [key: string]: any }) {
 function generateLabels(params: { [key: string]: any }) {
     const scopes = [
         Scope.ArabicNumerals,
-        Scope.NumberRepresentation,
         Scope.Base10,
         Scope.NumbersWithoutZero,
         ...numScopes([params.digitsNum1 || 3, params.digitsNum2 || 3]),
