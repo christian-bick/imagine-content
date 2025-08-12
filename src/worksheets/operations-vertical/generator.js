@@ -1,5 +1,3 @@
-const DEFAULT_COUNT = 1
-
 // --- PERMUTATION GENERATORS ---
 
 function generateAdditionPermutations() {
@@ -10,15 +8,13 @@ function generateAdditionPermutations() {
                 digitsNum1: i,
                 digitsNum2: i,
                 operations: 'add',
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     permutations.push({
         params: {
             operations: 'add',
-        },
-        count: DEFAULT_COUNT
+        }
     });
     return permutations;
 }
@@ -31,8 +27,7 @@ function generateSubtractionPermutations() {
                 digitsNum1: i,
                 digitsNum2: i,
                 operations: 'subtract'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -40,22 +35,19 @@ function generateSubtractionPermutations() {
                 digitsNum2: i,
                 operations: 'subtract',
                 allowNegatives: 1
-            },
-            count: DEFAULT_COUNT,
+            }
         });
     }
     permutations.push({
         params: {
             operations: 'subtract',
-        },
-        count: DEFAULT_COUNT
+        }
     });
     permutations.push({
         params: {
             operations: 'subtract',
             allowNegatives: 1
-        },
-        count: DEFAULT_COUNT
+        }
     });
     return permutations;
 }
@@ -68,8 +60,7 @@ function generateDivisionPermutations() {
                 digitsNum1: i,
                 digitsNum2: 1,
                 operations: 'divide'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
@@ -83,8 +74,7 @@ function generateMultiplicationPermutations() {
                 digitsNum1: i,
                 digitsNum2: 1,
                 operations: 'multiply',
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
@@ -98,15 +88,13 @@ function generateMixedAddSubtract() {
                 digitsNum1: i,
                 digitsNum2: i,
                 operations: 'add,subtract',
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     permutations.push({
         params: {
             operations: 'add,subtract'
-        },
-        count: DEFAULT_COUNT
+        }
     });
     return permutations;
 }
@@ -119,8 +107,7 @@ function generateMixedMultiplyDivide() {
                 digitsNum1: i,
                 digitsNum2: 1,
                 operations: 'multiply,divide',
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;

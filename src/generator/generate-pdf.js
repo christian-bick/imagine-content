@@ -37,15 +37,13 @@ export function generateConfigs(moduleName, generator) {
     const expandedConfigs = [];
     const permutations = generator.generatePermutations();
     for (const perm of permutations) {
-        const {count, params, labels} = perm; // Extract labels here
+        const {params, labels} = perm; // Extract labels here
         const name = generator.generateName(params);
-        for (let i = 1; i <= count; i++) {
-            expandedConfigs.push({
-                filename: `${moduleName}_${name}_${i}.pdf`,
-                params: params,
-                labels: labels
-            });
-        }
+        expandedConfigs.push({
+            filename: `${moduleName}_${name}.pdf`,
+            params: params,
+            labels: labels
+        });
     }
     return expandedConfigs;
 }

@@ -1,5 +1,3 @@
-const DEFAULT_COUNT = 1
-
 // --- PERMUTATION GENERATORS ---
 
 function generateAdditionPermutations() {
@@ -11,8 +9,7 @@ function generateAdditionPermutations() {
                 digitsNum2: i,
                 operations: 'add',
                 blankPart: 'answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -20,8 +17,7 @@ function generateAdditionPermutations() {
                 digitsNum2: i,
                 operations: 'add',
                 blankPart: 'problem'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -29,30 +25,26 @@ function generateAdditionPermutations() {
                 digitsNum2: i,
                 operations: 'add',
                 blankPart: 'problem-answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     permutations.push({
         params: {
             operations: 'add',
             blankPart: 'answer'
-        },
-        count: DEFAULT_COUNT
+        }
     });
     permutations.push({
         params: {
             operations: 'add',
             blankPart: 'problem',
-        },
-        count: DEFAULT_COUNT
+        }
     });
     permutations.push({
         params: {
             operations: 'add',
             blankPart: 'problem-answer',
-        },
-        count: DEFAULT_COUNT
+        }
     });
     return permutations;
 }
@@ -66,8 +58,7 @@ function generateSubtractionPermutations() {
                 digitsNum2: i,
                 operations: 'subtract',
                 blankPart: 'answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -75,8 +66,7 @@ function generateSubtractionPermutations() {
                 digitsNum2: i,
                 operations: 'add',
                 blankPart: 'subtract'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -84,30 +74,26 @@ function generateSubtractionPermutations() {
                 digitsNum2: i,
                 operations: 'subtract',
                 blankPart: 'problem-answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     permutations.push({
         params: {
             operations: 'subtract',
             blankPart: 'answer'
-        },
-        count: DEFAULT_COUNT
+        }
     });
     permutations.push({
         params: {
             operations: 'subtract',
             blankPart: 'problem'
-        },
-        count: DEFAULT_COUNT
+        }
     });
     permutations.push({
         params: {
             operations: 'subtract',
             blankPart: 'problem-answer'
-        },
-        count: DEFAULT_COUNT
+        }
     });
     return permutations;
 }
@@ -120,8 +106,7 @@ function generateDivisionPermutations() {
                 digitsNum1: i,
                 digitsNum2: 1,
                 operations: 'divide'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -129,8 +114,7 @@ function generateDivisionPermutations() {
                 digitsNum2: 1,
                 operations: 'divide',
                 blankPart: 'problem-answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
@@ -144,16 +128,14 @@ function generateMultiplicationPermutations() {
                 digitsNum1: i,
                 digitsNum2: 1,
                 operations: 'multiply'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
                 digitsNum1: i,
                 digitsNum2: 1,
                 operations: 'problem-answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
@@ -168,8 +150,7 @@ function generateMixedAddSubtract() {
                 digitsNum2: i,
                 operations: 'add,subtract',
                 blankPart: 'answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -177,8 +158,7 @@ function generateMixedAddSubtract() {
                 digitsNum2: i,
                 operations: 'add,subtract',
                 blankPart: 'problem'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -186,8 +166,7 @@ function generateMixedAddSubtract() {
                 digitsNum2: i,
                 operations: 'add,subtract',
                 blankPart: 'problem-answer'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
@@ -195,8 +174,7 @@ function generateMixedAddSubtract() {
                 digitsNum2: i,
                 operations: 'add,subtract',
                 blankPart: 'random'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
@@ -211,16 +189,14 @@ function generateMixedMultiplyDivide() {
                 digitsNum2: 1,
                 operations: 'multiply,divide',
                 blankPart: 'random'
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
                 digitsNum1: i,
                 digitsNum2: 1,
                 blankPart: 'operator'
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
@@ -234,24 +210,21 @@ function generateMixedAll() {
                 digitsNum1: i,
                 digitsNum2: 1,
                 blankPart: 'answers',
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
                 digitsNum1: i,
                 digitsNum2: 1,
                 blankPart: 'operator',
-            },
-            count: DEFAULT_COUNT
+            }
         });
         permutations.push({
             params: {
                 digitsNum1: i,
                 digitsNum2: 1,
                 blankPart: 'random',
-            },
-            count: DEFAULT_COUNT
+            }
         });
     }
     return permutations;
