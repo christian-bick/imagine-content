@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test": "vitest",
     "generate:pdf:vertical": "node src/generator/generate-pdf.js operations-vertical",
-    "generate:pdf:boxes": "node src/generator/generate-pdf.js operations-with-boxes"
+    "generate:pdf:vertical:dry": "node src/generator/generate-pdf.js operations-vertical --dry",
+    "generate:pdf:boxes": "node src/generator/generate-pdf.js operations-with-boxes",
+    "generate:pdf:boxes:dry": "node src/generator/generate-pdf.js operations-with-boxes --dry"
   },
   "devDependencies": {
     "glob": "^11.0.3",
