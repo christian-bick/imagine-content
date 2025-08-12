@@ -3,13 +3,12 @@ import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
 import {createHash} from 'crypto';
-import {Buffer} from 'buffer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PROJECT_ROOT = resolve(__dirname, '..', '..');
-const TEMP_DIR = resolve(PROJECT_ROOT, 'temp');
+const OUT_DIR = resolve(PROJECT_ROOT, 'out');
 const BASE_URL = 'http://localhost:5173';
 
 interface Generator {
@@ -88,8 +87,8 @@ async function generatePdfs() {
     const page = await browser.newPage();
 
     // Ensure the temp directory exists
-    if (!existsSync(TEMP_DIR)) {
-        mkdirSync(TEMP_DIR);
+    if (!existsSync(OUT_DIR)) {
+        mkdirSync(OUT_DIR);
     }
 
     for (const config of configurations) {
@@ -98,7 +97,7 @@ async function generatePdfs() {
         await page.goto(url, {waitUntil: 'networkidle0'});
 
         console.log(`Generating PDF for: ${config.filename}`);
-        const pdfPath = resolve(TEMP_DIR, config.filename);
+        const pdfPath = resolve(OUT_DIR, config.filename);
         await page.pdf({
             path: pdfPath,
             format: 'A4',
@@ -121,16 +120,15 @@ async function generatePdfs() {
     console.log('Generating meta file...');
     const metaForJson = configurations.map(c => {
         const urlPath = getRelativeWorksheetUrl(moduleName, c.params);
-        const encodedUrlPath = Buffer.from(urlPath).toString('base64');
         return {
             id: c.id,
             filename: c.filename,
-            source: encodedUrlPath,
+            source: urlPath,
             labels: c.labels
         };
     });
 
-    const metaPath = resolve(TEMP_DIR, `meta_${moduleName}.json`);
+    const metaPath = resolve(OUT_DIR, `meta_${moduleName}.json`);
     writeFileSync(metaPath, JSON.stringify(metaForJson, null, 2));
     console.log(`Meta file generated at: ${metaPath}`);
 }

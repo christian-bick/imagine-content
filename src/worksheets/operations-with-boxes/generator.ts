@@ -66,13 +66,9 @@ function generateLabels(params: { [key: string]: any }) {
         return mapping[op]
     })
 
-    const abilities = params.blankPart.map((blankPart: string) => {
-        if (blankPart === 'operator' || blankPart === 'random') {
-            return Ability.ProcedureIdentification
-        } else {
-            return []
-        }
-    }).push(Ability.ProcedureApplication)
+    const blank = params.blankPart
+    const abilities = (blank === 'operator' || blank === 'random') ? [Ability.ProcedureIdentification] : []
+    abilities.push(Ability.ProcedureApplication)
 
     return {
         Ability: abilities,
