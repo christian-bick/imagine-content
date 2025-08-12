@@ -141,7 +141,12 @@ function generateName(params) {
     return name;
 }
 
+function generateLabels(params) {
+    return {}
+}
+
 export default {
     generatePermutations,
     generateName,
+    generateLabels,
 }
