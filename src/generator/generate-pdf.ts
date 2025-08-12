@@ -21,7 +21,7 @@ interface Config {
     filename: string;
     params: any;
     labels: any;
-    id?: string;
+    hash?: string;
 }
 
 async function loadConfigGenerator(moduleName: string): Promise<Generator> {
@@ -64,6 +64,7 @@ export function generateConfigs(moduleName: string, generator: Generator): Confi
 async function generatePdfs() {
     const args = process.argv.slice(2);
     const moduleName = args[0];
+    const isDryRun = args.includes('--dry');
 
     if (!moduleName) {
         console.error('Please provide a module name as an argument.');
@@ -74,13 +75,6 @@ async function generatePdfs() {
 
     const configGenerator = await loadConfigGenerator(moduleName);
     const configurations: Config[] = generateConfigs(moduleName, configGenerator);
-
-    const isDryRun = args.includes('--dry');
-    if (isDryRun) {
-        console.log('Dry run: Configurations would be:');
-        console.log(configurations);
-        return;
-    }
 
     console.log('Launching browser...');
     const browser = await puppeteer.launch({headless: true});
@@ -93,24 +87,29 @@ async function generatePdfs() {
 
     for (const config of configurations) {
         const url = getWorksheetUrl(moduleName, config.params);
-        console.log(`Navigating to ${url}`);
-        await page.goto(url, {waitUntil: 'networkidle0'});
+        let hashSum = createHash('sha256');
+        if (isDryRun) {
+            console.log('Dry run: Skipping PDF generation');
+        } else {
+            console.log(`Navigating to ${url}`);
+            await page.goto(url, {waitUntil: 'networkidle0'});
 
-        console.log(`Generating PDF for: ${config.filename}`);
-        const pdfPath = resolve(OUT_DIR, config.filename);
-        await page.pdf({
-            path: pdfPath,
-            format: 'A4',
-            printBackground: true
-        });
-        console.log(`PDF generated at: ${pdfPath}`);
+            console.log(`Generating PDF for: ${config.filename}`);
+            const pdfPath = resolve(OUT_DIR, config.filename);
+            await page.pdf({
+                path: pdfPath,
+                format: 'A4',
+                printBackground: true
+            });
+            console.log(`PDF generated at: ${pdfPath}`);
 
-        // Calculate SHA256 hash
-        const fileBuffer = readFileSync(pdfPath);
-        const hashSum = createHash('sha256');
-        hashSum.update(fileBuffer);
+            // Calculate SHA256 hash
+            const fileBuffer = readFileSync(pdfPath);
+            const hashSum = createHash('sha256');
+            hashSum.update(fileBuffer);
+        }
         // Add hash to the configuration object
-        config.id = hashSum.digest('hex');
+        config.hash = hashSum.digest('hex');
     }
 
     await browser.close();
@@ -121,7 +120,7 @@ async function generatePdfs() {
     const metaForJson = configurations.map(c => {
         const urlPath = getRelativeWorksheetUrl(moduleName, c.params);
         return {
-            id: c.id,
+            hash: c.hash,
             filename: c.filename,
             source: urlPath,
             labels: c.labels
