@@ -1,8 +1,12 @@
 <header class="header {{#if answerKey}}header-answer-key{{/if}}">
+    {{#if imageSrc}}
+    <img src="{{imageSrc}}" alt="Header Image" class="header-image"/>
+    {{else}}
     <h1 class="header-title }">{{title}}</h1>
+    {{/if}}
     <div class="info-fields">
-        <div>Name <span></span></div>
-        <div>Date <span></span></div>
+        <div><img src="/icons/user.svg" alt="User Icon" class="icon"/> <span></span></div>
+        <div><img src="/icons/calendar.svg" alt="Calendar Icon" class="icon"/> <span></span></div>
     </div>
 </header>
 
@@ -11,8 +15,7 @@
     .header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        border-bottom: 2px solid #e0e0e0;
+        border-bottom: 1px solid lightslategray;
         padding-bottom: 20px;
         margin-bottom: 30px;
     }
@@ -26,20 +29,32 @@
 
     .header .info-fields {
         font-size: 1rem;
-        color: #555;
         text-align: right;
+        display: flex;
+        flex-direction: column;
     }
 
     .header .info-fields div {
-        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+
+    .header .info-fields div:first-child {
+        margin-bottom: 17px;
+    }
+
+    .header .info-fields .icon {
+        width: 30px;
+        height: 30px;
+        margin-right: 5px;
     }
 
     .header .info-fields span {
         display: inline-block;
-        border-bottom: 1px solid #888;
-        min-width: 150px;
-        height: 20px;
-        margin-left: 8px;
+        border-bottom: 1px solid gray;
+        min-width: 225px;
+        height: 30px;
+        margin-left: 10px;
     }
 
     .header-answer-key .info-fields {
@@ -48,5 +63,11 @@
 
     .header-answer-key .header-title {
         color: forestgreen;
+    }
+
+    .header-image {
+        max-width: 100%;
+        height: auto;
+        max-height: 100px; /* Adjust as needed */
     }
 </style>
