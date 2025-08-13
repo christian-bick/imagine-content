@@ -8,12 +8,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "generate:pdf:vertical": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-vertical",
-    "generate:pdf:vertical:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-vertical --dry",
-    "generate:pdf:boxes": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes",
-    "generate:pdf:boxes:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes --dry",
-    "generate:pdf:boxes1": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes-single",
-    "generate:pdf:boxes1:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes-single --dry"
+    "generate:pdf:vertical": "npx vite-node src/generator/generate-pdf.ts operations-vertical",
+    "generate:pdf:vertical:dry": "npx vite-node src/generator/generate-pdf.ts operations-vertical --dry",
+    "generate:pdf:boxes": "npx vite-node src/generator/generate-pdf.ts operations-boxes",
+    "generate:pdf:boxes:dry": "npx vite-node src/generator/generate-pdf.ts operations-boxes --dry",
+    "generate:pdf:boxes1": "npx vite-node src/generator/generate-pdf.ts operations-boxes-single",
+    "generate:pdf:boxes1:dry": "npx vite-node src/generator/generate-pdf.ts operations-boxes-single --dry"
   },
   "devDependencies": {
     "glob": "^11.0.3",
@@ -22,6 +22,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "vite": "^7.1.0",
+    "vite-node": "^3.2.4",
     "vite-plugin-handlebars": "^2.0.0",
     "vitest": "^3.2.4"
   },

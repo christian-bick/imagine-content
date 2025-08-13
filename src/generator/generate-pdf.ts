@@ -20,15 +20,18 @@ interface Generator {
 
 interface Config {
     filename: string;
+    preview: string;
     params: any;
     labels: any;
     hash?: string;
 }
 
 async function loadConfigGenerator(moduleName: string): Promise<Generator> {
-    const configGenerationPath = `../worksheets/${moduleName}/generator.ts`;
+    // Resolve the path relative to the project root
+    const configGenerationPath = resolve(PROJECT_ROOT, 'src', 'worksheets', moduleName, 'generator.ts');
     try {
-        const { default: generator } = await import(configGenerationPath);
+        // Use a file URL for dynamic import to ensure it's treated as a module path
+        const { default: generator } = await import('file:///' + configGenerationPath.replace(/\\/g, '/'));
         return generator
     } catch (error) {
         console.error(`Failed to load configuration for module: ${moduleName}`);
@@ -58,6 +61,7 @@ export function generateConfigs(moduleName: string, generator: Generator): Confi
         const labels  = generator.generateLabels(params);
         expandedConfigs.push({
             filename: `${moduleName}_${name}.pdf`,
+            preview: `${moduleName}_${name}.png`,
             params: params,
             labels: labels
         });
@@ -109,6 +113,22 @@ async function generatePdfs() {
             });
             console.log(`PDF generated at: ${pdfPath}`);
 
+            // Generate web-optimized PNG preview
+            const pngFilename = config.filename.replace(/\.pdf$/, '.png');
+            const pngPath = resolve(moduleOutputDir, pngFilename);
+            console.log(`Generating PNG preview for: ${pngFilename}`);
+
+            const worksheetElement = await page.$('#worksheet'); // Find the element by ID
+            if (worksheetElement) {
+                await worksheetElement.screenshot({ // Take screenshot of the element
+                    path: pngPath,
+                    type: 'png',
+                });
+                console.log(`PNG preview generated at: ${pngPath}`);
+            } else {
+                console.warn(`Warning: Element with id="worksheet" not found for ${config.filename}. Skipping PNG preview.`);
+            }
+
             // Calculate SHA256 hash
             const fileBuffer = readFileSync(pdfPath);
             const hashSum = createHash('sha256');
@@ -129,6 +149,7 @@ async function generatePdfs() {
         return {
             hash: c.hash,
             filename: c.filename,
+            preview: c.preview,
             source: urlPath,
             created: creationTimestamp,
             labels: c.labels,
