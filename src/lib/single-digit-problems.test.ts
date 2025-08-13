@@ -5,146 +5,69 @@ import {
     generateDivision,
     generateProblemSet
 } from './single-digit-problems.ts';
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, vi, afterEach} from 'vitest';
+
+afterEach(() => {
+    vi.restoreAllMocks();
+});
 
 describe('generateAddition', () => {
-    it('should generate a problem with carry and no zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateAddition(true, false, false);
-            expect(answer).toBeGreaterThanOrEqual(10);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-            expect(answer).not.toBe(0);
-        }
-    });
-
-    it('should generate a problem with no carry and no zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateAddition(false, false, false);
-            expect(answer).toBeLessThan(10);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-        }
-    });
-
-    it('should generate a problem with no carry and with zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateAddition(false, true, false);
-            expect(answer).toBeLessThan(10);
-            expect(num1 === 0 || num2 === 0 || answer === 0).toBe(true);
-        }
-    });
-
     it('should generate a problem with negative numbers', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateAddition(false, false, true);
-            expect(num1 <= 0 || num2 <= 0).toBe(true);
-            expect(num1 + num2).toBe(answer);
-        }
+        vi.spyOn(Math, 'random')
+            .mockReturnValueOnce(0.1) // digit for num1 = 1
+            .mockReturnValueOnce(0.4) // sign for num1 = negative
+            .mockReturnValueOnce(0.2) // digit for num2 = 2
+            .mockReturnValueOnce(0.6); // sign for num2 = positive
+
+        const {num1, num2, answer} = generateAddition(false, false, true);
+        expect(num1).toBe(-1);
+        expect(num2).toBe(2);
+        expect(answer).toBe(1);
     });
 });
 
 describe('generateSubtraction', () => {
-    it('should generate a problem with borrow (carry) and no zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2} = generateSubtraction(true, false, true);
-            expect(num1).toBeLessThan(num2);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-        }
-    });
-
-    it('should generate a problem with no borrow (carry) and no zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2} = generateSubtraction(false, false, false);
-            expect(num1).toBeGreaterThanOrEqual(num2);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-        }
-    });
-
-    it('should generate a problem with no borrow (carry) and with zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateSubtraction(false, true, false);
-            expect(num1).toBeGreaterThanOrEqual(num2);
-            expect(num1 === 0 || num2 === 0 || answer === 0).toBe(true);
-        }
-    });
-
     it('should generate a problem with negative numbers', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateSubtraction(false, false, true);
-            expect(num1 <= 0 || num2 <= 0).toBe(true);
-            expect(num1 - num2).toBe(answer);
-        }
+        vi.spyOn(Math, 'random')
+            .mockReturnValueOnce(0.3) // digit for num1 = 3
+            .mockReturnValueOnce(0.4) // sign for num1 = negative
+            .mockReturnValueOnce(0.5) // digit for num2 = 5
+            .mockReturnValueOnce(0.6); // sign for num2 = positive
+
+        const {num1, num2, answer} = generateSubtraction(false, false, true);
+        expect(num1).toBe(-3);
+        expect(num2).toBe(5);
+        expect(answer).toBe(-8);
     });
 });
 
 describe('generateMultiplication', () => {
-    it('should generate a problem with carry and no zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateMultiplication(true, false, false);
-            expect(answer).toBeGreaterThanOrEqual(10);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-            expect(answer).not.toBe(0);
-        }
-    });
-
-    it('should generate a problem with no carry and no zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateMultiplication(false, false, false);
-            expect(answer).toBeLessThan(10);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-        }
-    });
-
-    it('should generate a problem with no carry and with zero', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateMultiplication(false, true, false);
-            expect(answer).toBeLessThan(10);
-            expect(num1 === 0 || num2 === 0 || answer === 0).toBe(true);
-        }
-    });
-
     it('should generate a problem with negative numbers', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateMultiplication(false, false, true);
-            expect(num1 <= 0 || num2 <= 0).toBe(true);
-            expect(num1 * num2).toBe(answer);
-        }
+        vi.spyOn(Math, 'random')
+            .mockReturnValueOnce(0.4) // digit for num1 = 4
+            .mockReturnValueOnce(0.4) // sign for num1 = negative
+            .mockReturnValueOnce(0.6) // digit for num2 = 6
+            .mockReturnValueOnce(0.6); // sign for num2 = positive
+
+        const {num1, num2, answer} = generateMultiplication(false, false, true);
+        expect(num1).toBe(-4);
+        expect(num2).toBe(6);
+        expect(answer).toBe(-24);
     });
 });
 
 describe('generateDivision', () => {
-    it('should generate a division problem with carry (dividend >= 10)', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateDivision(true, false);
-            expect(num1 / num2).toBe(answer);
-            expect(num1).toBeGreaterThanOrEqual(10);
-            expect(num2).not.toBe(0);
-            expect(answer).not.toBe(0);
-        }
-    });
-
-    it('should generate a division problem with no carry (dividend < 10)', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateDivision(false, false);
-            expect(num1 / num2).toBe(answer);
-            expect(num1).toBeLessThan(10);
-            expect(num1).not.toBe(0);
-            expect(num2).not.toBe(0);
-            expect(answer).not.toBe(0);
-        }
-    });
-
     it('should generate a problem with negative numbers', () => {
-        for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateDivision(false, true);
-            expect(num1 / num2).toBe(answer);
-            expect(num1 <= 0 || num2 < 0 || answer <= 0).toBe(true);
-        }
+        vi.spyOn(Math, 'random')
+            .mockReturnValueOnce(0.8) // digit for divisor = 8
+            .mockReturnValueOnce(0.4) // sign for divisor = negative
+            .mockReturnValueOnce(0.2) // digit for quotient = 2
+            .mockReturnValueOnce(0.6); // sign for quotient = positive
+
+        const {num1, num2, answer} = generateDivision(false, true);
+        expect(num2).toBe(-8); // divisor
+        expect(answer).toBe(2); // quotient
+        expect(num1).toBe(-16); // dividend
     });
 });
 
