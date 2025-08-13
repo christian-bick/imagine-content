@@ -65,29 +65,41 @@ export function generateSubtraction({minNum1, maxNum1, minNum2, maxNum2}: Subtra
     return {num1, num2, answer}
 }
 
-export function generateDivision({maxNum1, minNum2, maxNum2}: DivisionConfig): Problem {
-    let divisor;
-    let quotient = 0; // Initialize quotient to ensure the loop runs correctly
+export function generateDivision({minNum1, maxNum1, minNum2, maxNum2}: DivisionConfig, allowNegatives = false): Problem {
+    let divisor, quotient;
     let tries = 0;
-    const maxTries = 50; // Circuit breaker limit
+    const maxTries = 50;
 
-    do {
-        if (tries >= maxTries) {
-            throw new Error("Could not generate a valid division problem with the given constraints.");
-        }
+    while (tries < maxTries) {
+        tries++;
 
         divisor = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
-        const maxQuotient = Math.floor(maxNum1 / divisor);
+        if (divisor === 0) continue;
 
-        // If a valid quotient (>1) cannot be found with this divisor, try again.
-        if (maxQuotient > -2 && maxQuotient < 2) {
-            tries++;
-            continue;
+        let currentMaxQuotient, currentMinQuotient;
+
+        if (divisor > 0) {
+            currentMaxQuotient = Math.floor(maxNum1 / divisor);
+            currentMinQuotient = Math.ceil(minNum1 / divisor);
+        } else { // divisor < 0
+            currentMaxQuotient = Math.floor(minNum1 / divisor); // minNum1 / negative divisor gives larger (less negative) quotient
+            currentMinQuotient = Math.ceil(maxNum1 / divisor); // maxNum1 / negative divisor gives smaller (more negative) quotient
         }
 
-        quotient = Math.floor(Math.random() * maxQuotient);
-        tries++;
-    } while (1 >= divisor && divisor >= -1 || 1 >= quotient && quotient >= -1);
+        if (currentMaxQuotient < currentMinQuotient) continue;
+
+        quotient = Math.floor(Math.random() * (currentMaxQuotient - currentMinQuotient + 1)) + currentMinQuotient;
+
+        if (!allowNegatives) {
+            if (divisor > -2 && divisor < 2) continue;
+            if (quotient > -2 && quotient < 2) continue;
+        }
+        break;
+
+    }
+    if (tries >= maxTries) {
+        throw new Error("Could not generate a valid division problem with the given constraints.");
+    }
 
     return {
         num1: quotient * divisor,
@@ -129,23 +141,15 @@ export function generateProblem(op: string, {digitsNum1, digitsNum2, maxDigits =
 
     const defaultBoundaries = {
         maxNum1: maxNum1,
-        // If negatives are allowed, min is -max, otherwise it's based on digits
         minNum1: allowNegatives ? -maxNum1 : minNum1,
-
         maxNum2: maxNum2,
-        // If negatives are allowed, min is -max, otherwise it's based on digits
         minNum2: allowNegatives ? -maxNum2 : minNum2,
     }
     let problem: Problem = {} as Problem;
 
     switch (op) {
         case 'subtract':
-            problem = generateSubtraction({
-                maxNum1: maxNum1,
-                minNum1: minNum1,
-                maxNum2: allowNegatives ? maxNum2 : Math.min(maxNum2, maxNum1),
-                minNum2: allowNegatives ? minNum2 : Math.min(minNum2, minNum1),
-            }, allowNegatives)
+            problem = generateSubtraction(defaultBoundaries, allowNegatives)
             break;
 
         case 'multiply':
@@ -153,12 +157,18 @@ export function generateProblem(op: string, {digitsNum1, digitsNum2, maxDigits =
             break;
 
         case 'divide':
+            let divMaxNum2 = Math.min(maxNum2, Math.max(Math.pow(10, exp1 - 1), 5));
+            let divMinNum2 = Math.min(minNum2, Math.max(Math.pow(10, exp1 - 2), 1));
+            if (allowNegatives) {
+                divMinNum2 = -divMaxNum2;
+            }
+
             problem = generateDivision({
                 maxNum1: maxNum1,
-                minNum1: minNum1,
-                maxNum2: Math.min(maxNum2, Math.max(Math.pow(10, exp1 - 1), 5)),
-                minNum2: Math.min(minNum2, Math.max(Math.pow(10, exp1 - 2), 1)),
-            })
+                minNum1: allowNegatives ? -maxNum1 : minNum1,
+                maxNum2: divMaxNum2,
+                minNum2: divMinNum2,
+            }, allowNegatives)
             break;
 
         case 'add':
