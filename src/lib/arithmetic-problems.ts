@@ -140,10 +140,8 @@ export function generateDivision(params: DivisionConfig): Problem {
 
         quotient = Math.floor(Math.random() * (currentMaxQuotient - currentMinQuotient + 1)) + currentMinQuotient;
 
-        if (!allowNegatives) {
-            if (divisor > -2 && divisor < 2) continue;
-            if (quotient > -2 && quotient < 2) continue;
-        }
+        if (divisor > -2 && divisor < 2) continue;
+        if (quotient > -2 && quotient < 2) continue;
         break;
 
     }
