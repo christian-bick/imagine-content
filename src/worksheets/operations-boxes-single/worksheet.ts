@@ -1,7 +1,7 @@
 import "../operations-boxes/worksheet.scss"
 import {getParams} from "../../lib/params.ts";
 import {generateProblemSet, Problem} from "../../lib/single-digit-problems.ts"
-import {renderContent} from "../operations-boxes/worksheet.ts";
+import {renderContent} from "../operations-boxes/renderer.ts";
 
 function getConfig() {
     const params = getParams(['operations', 'allowNegatives', 'blankPart', 'includeTenCarry', 'includeZero'])
