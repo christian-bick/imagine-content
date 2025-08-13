@@ -39,51 +39,87 @@ interface NumberGenerationParams {
     allowNegatives: boolean;
 }
 
+function generateNumber(digits: number | undefined, maxDigits: number, allowNegatives: boolean): number {
+    let exp;
+    if (digits) {
+        exp = digits;
+    } else {
+        exp = Math.floor(Math.random() * maxDigits) + 1;
+    }
+
+    let minNum = Math.pow(10, exp - 1);
+    let maxNum = Math.pow(10, exp) - 1;
+
+    if (allowNegatives) {
+        const absMaxNum = Math.pow(10, exp) - 1;
+        const absMinNum = Math.pow(10, exp - 1);
+
+        minNum = -absMaxNum;
+        maxNum = absMaxNum;
+    }
+
+    return Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
+}
+
+interface MinMaxBounds {
+    min: number;
+    max: number;
+}
+
+function getMinMaxBounds(digits: number | undefined, maxDigits: number, allowNegatives: boolean): MinMaxBounds {
+    let exp;
+    if (digits) {
+        exp = digits;
+    } else {
+        exp = Math.floor(Math.random() * maxDigits) + 1;
+    }
+
+    let minNum = Math.pow(10, exp - 1);
+    let maxNum = Math.pow(10, exp) - 1;
+
+    if (allowNegatives) {
+        const absMaxNum = Math.pow(10, exp) - 1;
+        const absMinNum = Math.pow(10, exp - 1);
+
+        minNum = -absMaxNum;
+        maxNum = absMaxNum;
+    }
+    return { min: minNum, max: maxNum };
+}
+
 export function generateSubtraction(params: SubtractionConfig): Problem {
     const { digitsNum1, digitsNum2, maxDigits, allowNegatives } = params;
 
-    let exp1;
-    if (digitsNum1) {
-        exp1 = digitsNum1;
-    } else {
-        exp1 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum1 = Math.pow(10, exp1 - 1);
-    let maxNum1 = Math.pow(10, exp1) - 1;
-
-    if (allowNegatives) {
-        const absMaxNum1 = Math.pow(10, exp1) - 1;
-        const absMinNum1 = digitsNum1 ? Math.pow(10, exp1 - 1) || 0 : 1;
-
-        minNum1 = -absMaxNum1;
-        maxNum1 = absMaxNum1;
-    }
-
-    const num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
-
-    let exp2;
-    if (digitsNum2) {
-        exp2 = digitsNum2;
-    } else {
-        exp2 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum2 = Math.pow(10, exp2 - 1);
-    let maxNum2 = Math.pow(10, exp2) - 1;
-
-    if (allowNegatives) {
-        const absMaxNum2 = Math.pow(10, exp2) - 1;
-        const absMinNum2 = digitsNum2 ? Math.pow(10, exp2 - 1) || 0 : 1;
-
-        minNum2 = -absMaxNum2;
-        maxNum2 = absMaxNum2;
-    }
+    const num1 = generateNumber(digitsNum1, maxDigits, allowNegatives);
 
     let num2;
     if (allowNegatives) {
-        num2 = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
+        num2 = generateNumber(digitsNum2, maxDigits, allowNegatives);
     } else {
-        const maxForNum2 = Math.min(num1, maxNum2);
-        num2 = Math.floor(Math.random() * (maxForNum2 - minNum2 + 1)) + minNum2;
+        // For subtraction, num2 must be less than or equal to num1 to avoid negative answers
+        // unless allowNegatives is true.
+        // We need to generate num2 within the correct digit range, but also ensure num2 <= num1.
+        // This requires a custom generation for num2 that respects both digit constraints and the value constraint.
+
+        // Recalculate minNum2 and maxNum2 based on digitsNum2
+        let exp2;
+        if (digitsNum2) {
+            exp2 = digitsNum2;
+        } else {
+            exp2 = Math.floor(Math.random() * maxDigits) + 1;
+        }
+        let minNum2ForSubtraction = Math.pow(10, exp2 - 1);
+        let maxNum2ForSubtraction = Math.pow(10, exp2) - 1;
+
+        // Cap maxNum2ForSubtraction by num1
+        maxNum2ForSubtraction = Math.min(maxNum2ForSubtraction, num1);
+
+        // Ensure minNum2ForSubtraction is not greater than maxNum2ForSubtraction
+        if (minNum2ForSubtraction > maxNum2ForSubtraction) {
+            num2 = num1; // Fallback to ensure a valid problem (answer 0)
+        } else {
+            num2 = Math.floor(Math.random() * (maxNum2ForSubtraction - minNum2ForSubtraction + 1)) + minNum2ForSubtraction;
+        }
     }
     const answer = num1 - num2;
     return {num1, num2, answer}
@@ -96,45 +132,15 @@ export function generateDivision(params: DivisionConfig): Problem {
     let tries = 0;
     const maxTries = 50;
 
-    // Calculate minNum1, maxNum1 based on digitsNum1
-    let exp1;
-    if (digitsNum1) {
-        exp1 = digitsNum1;
-    } else {
-        exp1 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum1 = Math.pow(10, exp1 - 1);
-    let maxNum1 = Math.pow(10, exp1) - 1;
+    // Get bounds for num1 (dividend)
+    const { min: minNum1, max: maxNum1 } = getMinMaxBounds(digitsNum1, maxDigits, allowNegatives);
 
-    if (allowNegatives) {
-        const absMaxNum1 = Math.pow(10, exp1) - 1;
-        const absMinNum1 = digitsNum1 ? Math.pow(10, exp1 - 1) || 0 : 1;
-
-        minNum1 = -absMaxNum1;
-        maxNum1 = absMaxNum1;
-    }
-
-    // Calculate minNum2, maxNum2 based on digitsNum2
-    let exp2;
-    if (digitsNum2) {
-        exp2 = digitsNum2;
-    } else {
-        exp2 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum2 = Math.pow(10, exp2 - 1);
-    let maxNum2 = Math.pow(10, exp2) - 1;
-
-    if (allowNegatives) {
-        const absMaxNum2 = Math.pow(10, exp2) - 1;
-        const absMinNum2 = digitsNum2 ? Math.pow(10, exp2 - 1) || 0 : 1;
-
-        minNum2 = -absMaxNum2;
-        maxNum2 = absMaxNum2;
-    }
+    // Get bounds for num2 (divisor)
+    const { min: minNum2, max: maxNum2 } = getMinMaxBounds(digitsNum2, maxDigits, allowNegatives);
 
     // Apply division-specific constraints for num2 (divisor)
-    let divMaxNum2 = Math.min(maxNum2, Math.max(Math.pow(10, exp1 - 1), 5));
-    let divMinNum2 = Math.min(minNum2, Math.max(Math.pow(10, exp1 - 2), 1));
+    let divMaxNum2 = Math.min(maxNum2, Math.max(Math.pow(10, digitsNum1 ? digitsNum1 - 1 : 1), 5)); // Use digitsNum1 for exp1
+    let divMinNum2 = Math.min(minNum2, Math.max(Math.pow(10, digitsNum1 ? digitsNum1 - 2 : 0), 1)); // Use digitsNum1 for exp1
     if (allowNegatives) {
         divMinNum2 = -divMaxNum2;
     }
@@ -180,43 +186,9 @@ export function generateDivision(params: DivisionConfig): Problem {
 export function generateMultiplication(params: MultiplicationConfig): Problem {
     const { digitsNum1, digitsNum2, maxDigits, allowNegatives } = params;
 
-    let exp1;
-    if (digitsNum1) {
-        exp1 = digitsNum1;
-    } else {
-        exp1 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum1 = Math.pow(10, exp1 - 1);
-    let maxNum1 = Math.pow(10, exp1) - 1;
+    const factor1 = generateNumber(digitsNum1, maxDigits, allowNegatives);
+    const factor2 = generateNumber(digitsNum2, maxDigits, allowNegatives);
 
-    if (allowNegatives) {
-        const absMaxNum1 = Math.pow(10, exp1) - 1;
-        const absMinNum1 = digitsNum1 ? Math.pow(10, exp1 - 1) || 0 : 1;
-
-        minNum1 = -absMaxNum1;
-        maxNum1 = absMaxNum1;
-    }
-
-    const factor1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
-
-    let exp2;
-    if (digitsNum2) {
-        exp2 = digitsNum2;
-    } else {
-        exp2 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum2 = Math.pow(10, exp2 - 1);
-    let maxNum2 = Math.pow(10, exp2) - 1;
-
-    if (allowNegatives) {
-        const absMaxNum2 = Math.pow(10, exp2) - 1;
-        const absMinNum2 = digitsNum2 ? Math.pow(10, exp2 - 1) || 0 : 1;
-
-        minNum2 = -absMaxNum2;
-        maxNum2 = absMaxNum2;
-    }
-
-    const factor2 = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
     return {
         num1: factor1,
         num2: factor2,
@@ -227,43 +199,9 @@ export function generateMultiplication(params: MultiplicationConfig): Problem {
 export function generateAddition(params: AdditionConfig): Problem {
     const { digitsNum1, digitsNum2, maxDigits, allowNegatives } = params;
 
-    let exp1;
-    if (digitsNum1) {
-        exp1 = digitsNum1;
-    } else {
-        exp1 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum1 = Math.pow(10, exp1 - 1);
-    let maxNum1 = Math.pow(10, exp1) - 1;
+    const num1 = generateNumber(digitsNum1, maxDigits, allowNegatives);
+    const num2 = generateNumber(digitsNum2, maxDigits, allowNegatives);
 
-    if (allowNegatives) {
-        const absMaxNum1 = Math.pow(10, exp1) - 1;
-        const absMinNum1 = digitsNum1 ? Math.pow(10, exp1 - 1) || 0 : 1;
-
-        minNum1 = -absMaxNum1;
-        maxNum1 = absMaxNum1;
-    }
-
-    const num1 = Math.floor(Math.random() * (maxNum1 - minNum1 + 1)) + minNum1;
-
-    let exp2;
-    if (digitsNum2) {
-        exp2 = digitsNum2;
-    } else {
-        exp2 = Math.floor(Math.random() * maxDigits) + 1;
-    }
-    let minNum2 = Math.pow(10, exp2 - 1);
-    let maxNum2 = Math.pow(10, exp2) - 1;
-
-    if (allowNegatives) {
-        const absMaxNum2 = Math.pow(10, exp2) - 1;
-        const absMinNum2 = digitsNum2 ? Math.pow(10, exp2 - 1) || 0 : 1;
-
-        minNum2 = -absMaxNum2;
-        maxNum2 = absMaxNum2;
-    }
-
-    const num2 = Math.floor(Math.random() * (maxNum2 - minNum2 + 1)) + minNum2;
     return {
         num1,
         num2,
