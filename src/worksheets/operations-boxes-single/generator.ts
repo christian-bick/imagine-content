@@ -2,7 +2,7 @@
 
 import PermutationBuilder from "../../lib/permutation-builder.ts";
 import {Area, Scope, Ability} from "edugraph-ts";
-import {numScopeWithTenCarry, withNegativesScope} from "../../lib/labels.ts";
+import {withNegativesScope} from "../../lib/labels.ts";
 
 function generatePermutations() {
     return [
