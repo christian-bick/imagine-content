@@ -29,57 +29,61 @@ function createProblemHTML(problem: Problem, highlightKey = '') {
         </div>`;
 }
 
-const config = getConfig()
-const problemSet = generateProblemSet(config)
+export function renderContent(config, problemSet) {
 
 // --- DOM ELEMENTS ---
-const problemsContainer = document.getElementById('problems-container');
-const answersContainer = document.getElementById('answers-container');
+    const problemsContainer = document.getElementById('problems-container');
+    const answersContainer = document.getElementById('answers-container');
 
-if (problemsContainer && answersContainer) {
-    for (const [index, problem] of problemSet.entries()) {
-        const worksheetProblem: Problem = { ...problem };
-        let blankPartKey = '';
+    if (problemsContainer && answersContainer) {
+        for (const [index, problem] of problemSet.entries()) {
+            const worksheetProblem: Problem = { ...problem };
+            let blankPartKey = '';
 
-        // Determine the blank part
-        switch (config.blankPart) {
-            case 'problem': {
-                const parts = ['num1', 'num2'];
-                blankPartKey = parts[Math.floor(Math.random() * parts.length)];
-                break;
+            // Determine the blank part
+            switch (config.blankPart) {
+                case 'problem': {
+                    const parts = ['num1', 'num2'];
+                    blankPartKey = parts[Math.floor(Math.random() * parts.length)];
+                    break;
+                }
+                case 'problem-answer': {
+                    const parts = ['num1', 'num2', 'answer'];
+                    blankPartKey = parts[Math.floor(Math.random() * parts.length)];
+                    break;
+                }
+                case 'operator':
+                    blankPartKey = 'symbol';
+                    break;
+                case 'random': {
+                    const allParts = ['num1', 'num2', 'answer', 'symbol'];
+                    blankPartKey = allParts[Math.floor(Math.random() * allParts.length)];
+                    break;
+                }
+                case 'answer':
+                default:
+                    blankPartKey = 'answer';
+                    break;
             }
-            case 'problem-answer': {
-                const parts = ['num1', 'num2', 'answer'];
-                blankPartKey = parts[Math.floor(Math.random() * parts.length)];
-                break;
+
+            // For all problems except the first one, blank out the determined part.
+            if (index > 0) {
+                if (blankPartKey === 'symbol') {
+                    worksheetProblem.symbol = '';
+                } else {
+                    (worksheetProblem as any)[blankPartKey] = '';
+                }
             }
-            case 'operator':
-                blankPartKey = 'symbol';
-                break;
-            case 'random': {
-                const allParts = ['num1', 'num2', 'answer', 'symbol'];
-                blankPartKey = allParts[Math.floor(Math.random() * allParts.length)];
-                break;
-            }
-            case 'answer':
-            default:
-                blankPartKey = 'answer';
-                break;
+
+            const problemHTML = createProblemHTML(worksheetProblem, index === 0 ? blankPartKey : '');
+            const answerHTML = createProblemHTML(problem, blankPartKey);
+
+            problemsContainer.innerHTML += problemHTML;
+            answersContainer.innerHTML += answerHTML;
         }
-
-        // For all problems except the first one, blank out the determined part.
-        if (index > 0) {
-            if (blankPartKey === 'symbol') {
-                worksheetProblem.symbol = '';
-            } else {
-                (worksheetProblem as any)[blankPartKey] = '';
-            }
-        }
-
-        const problemHTML = createProblemHTML(worksheetProblem, index === 0 ? blankPartKey : '');
-        const answerHTML = createProblemHTML(problem, blankPartKey);
-
-        problemsContainer.innerHTML += problemHTML;
-        answersContainer.innerHTML += answerHTML;
     }
 }
+
+const config = getConfig()
+const problemSet = generateProblemSet(config)
+renderContent(config, problemSet)
