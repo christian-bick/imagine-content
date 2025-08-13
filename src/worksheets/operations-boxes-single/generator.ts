@@ -9,7 +9,20 @@ function generatePermutations() {
         ...new PermutationBuilder()
             .applyVariants('operations', ['add', 'subtract', 'multiply', 'divide'])
             .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'random'])
+            .applyVariants('includeZero', [true, false])
+            .applyVariants('allowNegatives', [false, true])
+            .build(),
+
+        ...new PermutationBuilder()
+            .applyVariants('operations', ['add', 'subtract', 'multiply', 'divide'])
+            .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'random'])
             .applyVariants('includeTenCarry', [true, false])
+            .applyVariants('allowNegatives', [false, true])
+            .build(),
+
+        ...new PermutationBuilder()
+            .applyVariants('operations', ['add,subtract', 'multiply,divide', 'add,subtract,multiply,divide'])
+            .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'operator', 'random'])
             .applyVariants('includeZero', [true, false])
             .applyVariants('allowNegatives', [false, true])
             .build(),
@@ -18,7 +31,6 @@ function generatePermutations() {
             .applyVariants('operations', ['add,subtract', 'multiply,divide', 'add,subtract,multiply,divide'])
             .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'operator', 'random'])
             .applyVariants('includeTenCarry', [true, false])
-            .applyVariants('includeZero', [true, false])
             .applyVariants('allowNegatives', [false, true])
             .build(),
     ]
