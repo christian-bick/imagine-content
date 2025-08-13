@@ -23,20 +23,24 @@ interface ProblemSetConfig {
     includeZero?: boolean;
 }
 
-function getRandomDigit(allowZero: boolean): number {
+function getRandomDigit(allowZero: boolean, allowNegative: boolean): number {
     const min = allowZero ? 0 : 1;
-    return Math.floor(Math.random() * (10 - min)) + min;
+    let digit = Math.floor(Math.random() * (10 - min)) + min;
+    if (allowNegative && Math.random() < 0.5) {
+        digit = -digit;
+    }
+    return digit;
 }
 
-export function generateAddition(includeTenCarry: boolean, includeZero: boolean): Problem {
+export function generateAddition(includeTenCarry: boolean, includeZero: boolean, allowNegatives: boolean): Problem {
     let num1, num2, answer;
     const maxTries = 100;
     let tries = 0;
 
     do {
         if (tries++ > maxTries) throw new Error("Could not generate a valid addition problem.");
-        num1 = getRandomDigit(includeZero);
-        num2 = getRandomDigit(includeZero);
+        num1 = getRandomDigit(includeZero, allowNegatives);
+        num2 = getRandomDigit(includeZero, allowNegatives);
         answer = num1 + num2;
 
         const hasCarry = answer >= 10;
@@ -57,8 +61,8 @@ export function generateSubtraction(includeTenCarry: boolean, includeZero: boole
 
     do {
         if (tries++ > maxTries) throw new Error("Could not generate a valid subtraction problem.");
-        num1 = getRandomDigit(includeZero);
-        num2 = getRandomDigit(includeZero);
+        num1 = getRandomDigit(includeZero, allowNegatives);
+        num2 = getRandomDigit(includeZero, allowNegatives);
 
         // "Carry" in subtraction means borrowing, i.e., num1 < num2
         const hasCarry = num1 < num2;
@@ -87,15 +91,15 @@ export function generateSubtraction(includeTenCarry: boolean, includeZero: boole
     return { num1, num2, answer };
 }
 
-export function generateMultiplication(includeTenCarry: boolean, includeZero: boolean): Problem {
+export function generateMultiplication(includeTenCarry: boolean, includeZero: boolean, allowNegatives: boolean): Problem {
     let num1, num2, answer;
     const maxTries = 100;
     let tries = 0;
 
     do {
         if (tries++ > maxTries) throw new Error("Could not generate a valid multiplication problem.");
-        num1 = getRandomDigit(includeZero);
-        num2 = getRandomDigit(includeZero);
+        num1 = getRandomDigit(includeZero, allowNegatives);
+        num2 = getRandomDigit(includeZero, allowNegatives);
         answer = num1 * num2;
 
         const hasCarry = answer >= 10;
@@ -109,15 +113,15 @@ export function generateMultiplication(includeTenCarry: boolean, includeZero: bo
     return { num1, num2, answer };
 }
 
-export function generateDivision(includeTenCarry: boolean): Problem {
+export function generateDivision(includeTenCarry: boolean, allowNegatives: boolean): Problem {
     let num1, num2, answer;
     const maxTries = 100;
     let tries = 0;
 
     do {
         if (tries++ > maxTries) throw new Error("Could not generate a valid division problem.");
-        const divisor = getRandomDigit(false); // No zero in divisor
-        const quotient = getRandomDigit(false); // No zero in quotient for simplicity
+        const divisor = getRandomDigit(false, allowNegatives);
+        const quotient = getRandomDigit(false, allowNegatives);
         const dividend = divisor * quotient;
 
         const hasCarry = dividend >= 10;
@@ -142,14 +146,14 @@ export function generateProblem(op: string, config: ProblemSetConfig): Problem {
             problem = generateSubtraction(includeTenCarry, includeZero, allowNegatives);
             break;
         case 'multiply':
-            problem = generateMultiplication(includeTenCarry, includeZero);
+            problem = generateMultiplication(includeTenCarry, includeZero, allowNegatives);
             break;
         case 'divide':
-            problem = generateDivision(includeTenCarry);
+            problem = generateDivision(includeTenCarry, allowNegatives);
             break;
         case 'add':
         default:
-            problem = generateAddition(includeTenCarry, includeZero);
+            problem = generateAddition(includeTenCarry, includeZero, allowNegatives);
             break;
     }
     problem.symbol = operatorSymbols[op];
