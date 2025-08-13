@@ -8,7 +8,7 @@ function generatePermutations() {
     return [
         // Same operations with same problem digits
         ...new PermutationBuilder()
-            .applyRange(['digitsNum1', "digitsNum2"], [1, 3])
+            .applyRange(['digitsNum1', "digitsNum2"], [2, 3])
             .applyVariants('operations', ['add', 'subtract', 'multiply', 'divide'])
             .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'random'])
             .applyVariants('allowNegatives', [false, true])
@@ -23,7 +23,7 @@ function generatePermutations() {
 
         // Mixed operations with same digits
         ...new PermutationBuilder()
-            .applyRange(['digitsNum1', "digitsNum2"], [1, 3])
+            .applyRange(['digitsNum1', "digitsNum2"], [2, 3])
             .applyVariants('operations', ['add,subtract', 'multiply,divide', 'add,subtract,multiply', 'add,subtract,multiply,divide'])
             .applyVariants('blankPart', ['answer', 'problem', 'problem-answer', 'operator', 'random'])
             .applyVariants('allowNegatives', [false, true])
