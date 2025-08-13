@@ -11,8 +11,8 @@
     "generate:pdf:vertical": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-vertical",
     "generate:pdf:vertical:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-vertical --dry",
     "generate:pdf:boxes": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes",
-    "generate:pdf:boxes:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes-single --dry",
-    "generate:pdf:boxes1": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes",
+    "generate:pdf:boxes:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes --dry",
+    "generate:pdf:boxes1": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes-single",
     "generate:pdf:boxes1:dry": "node --loader ts-node/esm src/generator/generate-pdf.ts operations-boxes-single --dry"
   },
   "devDependencies": {
