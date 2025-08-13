@@ -93,16 +93,24 @@ describe('generateMultiplication', () => {
 });
 
 describe('generateDivision', () => {
-    it('should generate a valid division problem', () => {
+    it('should generate a division problem with carry (dividend >= 10)', () => {
         for (let i = 0; i < 100; i++) {
-            const {num1, num2, answer} = generateDivision();
+            const {num1, num2, answer} = generateDivision(true);
             expect(num1 / num2).toBe(answer);
+            expect(num1).toBeGreaterThanOrEqual(10);
+            expect(num2).toBeGreaterThan(0);
+            expect(answer).toBeGreaterThan(0);
+        }
+    });
+
+    it('should generate a division problem with no carry (dividend < 10)', () => {
+        for (let i = 0; i < 100; i++) {
+            const {num1, num2, answer} = generateDivision(false);
+            expect(num1 / num2).toBe(answer);
+            expect(num1).toBeLessThan(10);
             expect(num1).toBeGreaterThan(0);
             expect(num2).toBeGreaterThan(0);
             expect(answer).toBeGreaterThan(0);
-            expect(num1).toBeLessThan(10);
-            expect(num2).toBeLessThan(10);
-            expect(answer).toBeLessThan(10);
         }
     });
 });

@@ -69,7 +69,7 @@ export function generateSubtraction(includeTenCarry: boolean, includeZero: boole
             if (includeTenCarry) {
                 [num1, num2] = [num2, num1]; // Swap to ensure no carry
             } else {
-                // continue if we are looking for no-carry
+                continue; // continue if we are looking for no-carry
             }
         } else if (hasCarry !== includeTenCarry) {
             continue;
@@ -109,7 +109,7 @@ export function generateMultiplication(includeTenCarry: boolean, includeZero: bo
     return { num1, num2, answer };
 }
 
-export function generateDivision(): Problem {
+export function generateDivision(includeTenCarry: boolean): Problem {
     let num1, num2, answer;
     const maxTries = 100;
     let tries = 0;
@@ -120,7 +120,9 @@ export function generateDivision(): Problem {
         const quotient = getRandomDigit(false); // No zero in quotient for simplicity
         const dividend = divisor * quotient;
 
-        if (dividend < 10) { // single digit dividend
+        const hasCarry = dividend >= 10;
+
+        if (hasCarry === includeTenCarry) {
             num1 = dividend;
             num2 = divisor;
             answer = quotient;
@@ -143,7 +145,7 @@ export function generateProblem(op: string, config: ProblemSetConfig): Problem {
             problem = generateMultiplication(includeTenCarry, includeZero);
             break;
         case 'divide':
-            problem = generateDivision(); // Zero and carry flags are not applicable
+            problem = generateDivision(includeTenCarry);
             break;
         case 'add':
         default:
