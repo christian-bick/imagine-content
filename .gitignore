@@ -24,3 +24,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Protect dev credentials
+.env
+gcloud-credentials.json
