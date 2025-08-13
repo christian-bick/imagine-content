@@ -132,6 +132,24 @@ describe('generateSubtraction', () => {
         });
     });
 
+    describe('Digit Constraints', () => {
+        it('should generate num1 with exact digitsNum1 and num2 with exact digitsNum2', () => {
+            vi.spyOn(Math, 'random')
+                .mockReturnValueOnce(0.1) // For num1 (2 digits)
+                .mockReturnValueOnce(0.5); // For num2 (1 digit)
+
+            const config = { digitsNum1: 2, digitsNum2: 1, maxDigits: 5, allowNegatives: false };
+            const { num1, num2 } = generateSubtraction(config);
+
+            // num1 should be between 10 and 99 (inclusive)
+            expect(num1).toBeGreaterThanOrEqual(10);
+            expect(num1).toBeLessThanOrEqual(99);
+            // num2 should be between 1 and 9 (inclusive)
+            expect(num2).toBeGreaterThanOrEqual(1);
+            expect(num2).toBeLessThanOrEqual(9);
+        });
+    });
+
 });
 
 describe('generateAddition', () => {
@@ -203,6 +221,24 @@ describe('generateAddition', () => {
             expect(answer).toBe(0);
         });
     });
+
+    describe('Digit Constraints', () => {
+        it('should generate num1 with exact digitsNum1 and num2 with exact digitsNum2', () => {
+            vi.spyOn(Math, 'random')
+                .mockReturnValueOnce(0.1) // For num1 (2 digits)
+                .mockReturnValueOnce(0.5); // For num2 (1 digit)
+
+            const config = { digitsNum1: 2, digitsNum2: 1, maxDigits: 5, allowNegatives: false };
+            const { num1, num2 } = generateAddition(config);
+
+            // num1 should be between 10 and 99 (inclusive)
+            expect(num1).toBeGreaterThanOrEqual(10);
+            expect(num1).toBeLessThanOrEqual(99);
+            // num2 should be between 1 and 9 (inclusive)
+            expect(num2).toBeGreaterThanOrEqual(1);
+            expect(num2).toBeLessThanOrEqual(9);
+        });
+    });
 });
 
 describe('generateMultiplication', () => {
@@ -259,6 +295,24 @@ describe('generateMultiplication', () => {
             expect(num1).toBe(9);
             expect(num2).toBe(-9);
             expect(answer).toBe(-81);
+        });
+    });
+
+    describe('Digit Constraints', () => {
+        it('should generate num1 with exact digitsNum1 and num2 with exact digitsNum2', () => {
+            vi.spyOn(Math, 'random')
+                .mockReturnValueOnce(0.1) // For num1 (2 digits)
+                .mockReturnValueOnce(0.5); // For num2 (1 digit)
+
+            const config = { digitsNum1: 2, digitsNum2: 1, maxDigits: 5, allowNegatives: false };
+            const { num1, num2 } = generateMultiplication(config);
+
+            // num1 should be between 10 and 99 (inclusive)
+            expect(num1).toBeGreaterThanOrEqual(10);
+            expect(num1).toBeLessThanOrEqual(99);
+            // num2 should be between 1 and 9 (inclusive)
+            expect(num2).toBeGreaterThanOrEqual(1);
+            expect(num2).toBeLessThanOrEqual(9);
         });
     });
 });
@@ -347,6 +401,24 @@ describe('generateDivision', () => {
             expect(num2).toBe(9);
             expect(answer).toBe(-5);
             expect(num1).toBe(-45);
+        });
+    });
+
+    describe('Digit Constraints', () => {
+        it('should generate num1 with exact digitsNum1 and num2 with exact digitsNum2', () => {
+            vi.spyOn(Math, 'random')
+                .mockReturnValueOnce(0.1) // For num1 (2 digits)
+                .mockReturnValueOnce(0.5); // For num2 (1 digit)
+
+            const config = { digitsNum1: 2, digitsNum2: 1, maxDigits: 5, allowNegatives: false };
+            const { num1, num2 } = generateDivision(config);
+
+            // num1 should be between 10 and 99 (inclusive)
+            expect(num1).toBeGreaterThanOrEqual(10);
+            expect(num1).toBeLessThanOrEqual(99);
+            // num2 should be between 1 and 9 (inclusive)
+            expect(num2).toBeGreaterThanOrEqual(1);
+            expect(num2).toBeLessThanOrEqual(9);
         });
     });
 });
