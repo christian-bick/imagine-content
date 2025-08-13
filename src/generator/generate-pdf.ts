@@ -95,7 +95,7 @@ async function generatePdfs() {
         const url = getWorksheetUrl(moduleName, config.params);
         let hashSum = createHash('sha256');
         if (isDryRun) {
-            console.log('Dry run: Skipping PDF generation');
+            console.log(`Dry run: ${url}`);
         } else {
             console.log(`Navigating to ${url}`);
             await page.goto(url, {waitUntil: 'networkidle0'});
