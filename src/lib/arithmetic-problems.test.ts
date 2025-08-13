@@ -324,29 +324,29 @@ describe('generateDivision', () => {
             // 1st call to random() generates the divisor.
             // 2nd call to random() generates the quotient.
             vi.spyOn(Math, 'random')
-                .mockReturnValueOnce(0)      // Will produce divisor = -5.
-                .mockReturnValueOnce(0.5);   // With maxQuotient=-10, will produce quotient = -5.
+                .mockReturnValueOnce(0)      // Will produce divisor = -9.
+                .mockReturnValueOnce(0.7);   // With maxQuotient=11, minQuotient=-11, will produce quotient = 5.
 
             const config = {digitsNum1: 2, digitsNum2: 1, maxDigits: 5, allowNegatives: true};
             const {num1, num2, answer} = generateDivision(config);
 
             expect(num2).toBe(-9);   // divisor
-            expect(answer).toBe(0); // quotient
-            expect(num1).toBe(-0);   // quotient * divisor
+            expect(answer).toBe(5); // quotient
+            expect(num1).toBe(-45);   // quotient * divisor
         })
 
         it('should correctly divide a negative number by a positive number', () => {
             vi.spyOn(Math, 'random')
-                .mockReturnValueOnce(0.999999) // divisor = 2
-                .mockReturnValueOnce(0.5); // quotient = floor(0.5 * -25) = -13
+                .mockReturnValueOnce(0.999999) // divisor = 9
+                .mockReturnValueOnce(0.27); // With maxQuotient=11, minQuotient=-11, will produce quotient = -5.
 
             // This test requires minNum1 to be passed for negative dividends
             const config = {digitsNum1: 2, digitsNum2: 1, maxDigits: 5, allowNegatives: true};
             const {num1, num2, answer} = generateDivision(config);
 
             expect(num2).toBe(9);
-            expect(answer).toBe(0);
-            expect(num1).toBe(0);
+            expect(answer).toBe(-5);
+            expect(num1).toBe(-45);
         });
     });
 });
