@@ -2,7 +2,8 @@ import {
     generateAddition,
     generateSubtraction,
     generateMultiplication,
-    generateDivision
+    generateDivision,
+    generateProblemSet
 } from './single-digit-problems.ts';
 import {describe, it, expect} from 'vitest';
 
@@ -112,5 +113,41 @@ describe('generateDivision', () => {
             expect(num2).toBeGreaterThan(0);
             expect(answer).toBeGreaterThan(0);
         }
+    });
+});
+
+describe('generateProblemSet', () => {
+    it('should alternate problems with and without zero when includeZero is true', () => {
+        const config = {
+            operations: ['add'],
+            problemCount: 10,
+            includeZero: true,
+            includeTenCarry: false
+        };
+        const problemSet = generateProblemSet(config);
+
+        problemSet.forEach((problem, index) => {
+            const hasZero = problem.num1 === 0 || problem.num2 === 0 || problem.answer === 0;
+            if ((index % 2) === 1) {
+                expect(hasZero).toBe(true);
+            } else {
+                expect(hasZero).toBe(false);
+            }
+        });
+    });
+
+    it('should not include zero when includeZero is false', () => {
+        const config = {
+            operations: ['add'],
+            problemCount: 10,
+            includeZero: false,
+            includeTenCarry: false
+        };
+        const problemSet = generateProblemSet(config);
+
+        problemSet.forEach(problem => {
+            const hasZero = problem.num1 === 0 || problem.num2 === 0 || problem.answer === 0;
+            expect(hasZero).toBe(false);
+        });
     });
 });

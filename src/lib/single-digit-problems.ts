@@ -176,7 +176,13 @@ export function generateProblemSet(config: ProblemSetConfig): Problem[] {
         let tries = 0;
         do {
             if (tries++ > 50) throw new Error(`Failed to generate a unique problem for ${currentOperation}`);
-            problem = generateProblem(currentOperation, config);
+            
+            const localConfig = {...config};
+            if (config.includeZero) {
+                localConfig.includeZero = (i % 2) === 1;
+            }
+
+            problem = generateProblem(currentOperation, localConfig);
             problemKey = `${problem.num1},${currentOperation},${problem.num2}`;
         } while (existingProblemKeys.has(problemKey));
         existingProblemKeys.add(problemKey);
