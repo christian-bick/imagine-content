@@ -16,7 +16,7 @@ function generateName(params: { [key: string]: any }) {
 function generateLabels(params: { [key: string]: any }) {
     return {
         Area: [ Area.NumerationWithIntegers, Area.IntegerNotation ],
-        Ability: [ Ability. ],
+        Ability: [ ],
         Scope: [],
     };
 }

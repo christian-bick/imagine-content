@@ -4,23 +4,18 @@
     page-break-before: always;
 }
 
-.problems-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 40px 20px;
-}
-
 .problem {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
 
     .objects-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 10px;
         margin-bottom: 10px;
+        order: 1; /* This will move the objects to the left */
 
         img {
             width: 50px;
@@ -29,13 +24,22 @@
     }
 
     .answer-box {
-        width: 80px;
-        height: 40px;
+        width: 3em; /* Accommodate 2 digits with some padding */
+        min-width: 3em; /* Ensure the box doesn't shrink */
+        height: 2.5em;
         border: 1px solid #ccc;
         display: flex;
         justify-content: center;
         align-items: center;
         font-size: 1.2rem;
         color: forestgreen;
+        order: 2; /* This will move the answer box to the right */
+        margin-left: 20px; /* Add some space between the objects and the answer box */
     }
+}
+
+.problems-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Each problem will take the full width */
+    gap: 40px 20px;
 }

@@ -2,22 +2,29 @@ import "./worksheet.scss";
 import { getParams } from "../../lib/params.ts";
 
 // --- CONFIGURATION ---
-const ICONS = ['circle.svg', 'square.svg', 'triangle.svg'];
+const ICONS = ['circle.svg', 'square.svg', 'triangle.svg', 'star.svg', 'pentagon.svg', 'hexagon.svg', 'heart.svg', 'diamond.svg'];
 
 function getConfig() {
     const params = getParams(['count']);
+    const count = parseInt(params.count || '5', 10);
     return {
-        count: parseInt(params.count || '5', 10),
-        problemCount: 6,
+        count: count,
+        problemCount: count > 10 ? 5 : 8,
     };
 }
 
 // --- PROBLEM GENERATION ---
 function generateProblems(count: number, numProblems: number) {
     const problems = [];
+    const minCount = Math.max(1, count - 10);
+
+    // Shuffle icons to ensure variety
+    const shuffledIcons = [...ICONS].sort(() => 0.5 - Math.random());
+
     for (let i = 0; i < numProblems; i++) {
-        const numObjects = Math.floor(Math.random() * count) + 1;
-        const icon = ICONS[Math.floor(Math.random() * ICONS.length)];
+        const numObjects = Math.floor(Math.random() * (count - minCount + 1)) + minCount;
+        // Use a unique icon for each problem
+        const icon = shuffledIcons[i % shuffledIcons.length];
         problems.push({ numObjects, icon });
     }
     return problems;
