@@ -1,7 +1,9 @@
+import {Ability, Area, Scope} from "edugraph-ts";
+
 function generatePermutations() {
     return [
-        { order: 'default' },
-        { order: 'random' },
+        {order: 'default'},
+        {order: 'random'},
     ];
 }
 
@@ -11,9 +13,9 @@ function generateName(params: { [key: string]: any }) {
 
 function generateLabels(params: { [key: string]: any }) {
     return {
-        Ability: [],
-        Scope: [],
-        Area: []
+        Area: [Area.NumberNotation],
+        Ability: [Ability.Formalization],
+        Scope: [Scope.ArabicNumerals, Scope.NumbersSmaller10, Scope.Base10, Scope.NumbersWithoutNegatives],
     };
 }
 
