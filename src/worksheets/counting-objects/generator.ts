@@ -19,10 +19,10 @@ function generateLabels(params: { [key: string]: any }) {
         Ability: [Ability.ProcedureExecution],
         Scope: [
             Scope.Base10,
-            Scope.CountingSymbols,
             Scope.ArabicNumerals,
             Scope.NumbersWithoutZero,
             Scope.NumbersWithoutNegatives,
+            Scope.CountingSymbols,
             params.count <= 10 ? Scope.NumbersSmaller10 : Scope.NumbersSmaller20
         ],
     };

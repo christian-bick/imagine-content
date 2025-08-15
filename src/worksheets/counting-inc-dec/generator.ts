@@ -1,5 +1,5 @@
 import PermutationBuilder from "../../lib/permutation-builder.ts";
-import {Area, Scope} from "edugraph-ts";
+import {Ability, Area, Scope} from "edugraph-ts";
 
 function generatePermutations() {
     return [
@@ -15,9 +15,17 @@ function generateName(params: { [key: string]: any }) {
 }
 
 function generateLabels(params: { [key: string]: any }) {
+    let areas;
+    if (params.type === 'inc') {
+        areas = [Area.Increment]
+    } else if (params.type === 'dec') {
+        areas = [Area.Decrement]
+    } else {
+        areas = [Area.Increment, Area.Decrement]
+    }
     return {
-        Area: [ Area.Numeration, Area.Increment ],
-        Ability: [  ],
+        Area: [Area.Numeration, ...areas],
+        Ability: [Ability.Formalization, Ability.ProcedureIdentification, Ability.ProcedureExecution],
         Scope: [
             Scope.NumbersSmaller10,
             Scope.ArabicNumerals,

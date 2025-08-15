@@ -15,7 +15,14 @@ function generateLabels(params: { [key: string]: any }) {
     return {
         Area: [Area.NumberNotation],
         Ability: [Ability.Formalization],
-        Scope: [Scope.ArabicNumerals, Scope.NumbersSmaller10, Scope.Base10, Scope.NumbersWithoutNegatives],
+        Scope: [
+            Scope.ArabicNumerals,
+            Scope.NumbersSmaller10,
+            Scope.Base10,
+            Scope.NumbersWithoutNegatives,
+            Scope.CountingSymbols,
+            Scope.NumberTiles
+        ],
     };
 }
 
