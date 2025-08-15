@@ -27,7 +27,8 @@
         width: 3em; /* Accommodate 2 digits with some padding */
         min-width: 3em; /* Ensure the box doesn't shrink */
         height: 2.5em;
-        border: 1px solid #ccc;
+        border: 2px solid black;
+        border-radius: 4px;
         display: flex;
         justify-content: center;
         align-items: center;
