@@ -35,27 +35,29 @@ function createMeasureBand(bandLength: number): string {
     `;
 }
 
-function createPencil(pencilLength: number, bandLength: number): string {
-    const pencilWidth = 10; // Fixed width for the pencil
-    const displayLength = pencilLength * 30; // Convert cm to pixels for display
+const COLORS = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#6A5ACD', '#DA70D6'];
+
+function createRectangle(length: number, color: string): string {
+    const rectHeight = 20;
+    const displayLength = length * 30; // Convert cm to pixels for display
 
     return `
-        <svg class="pencil" viewBox="0 0 ${displayLength}">
-            <rect x="0" y="5" width="${displayLength}" height="${pencilWidth}" fill="#000000"/>
+        <svg class="measured-rectangle" viewBox="0 0 ${displayLength} ${rectHeight}">
+            <rect x="0" y="0" width="${displayLength}" height="${rectHeight}" fill="${color}"/>
         </svg>
     `;
 }
 
 // --- HTML GENERATION ---
-function createProblemHTML(problem: Problem, showAnswer: boolean, decimal: boolean) {
+function createProblemHTML(problem: Problem, showAnswer: boolean, decimal: boolean, color: string) {
     const measureBandHTML = createMeasureBand(problem.bandLength);
-    const pencilHTML = createPencil(problem.problemLength, problem.bandLength);
+    const rectangleHTML = createRectangle(problem.problemLength, color);
     const answer = decimal ? (problem.problemLength).toFixed(1) : (problem.problemLength * 10).toFixed(0);
 
     return `
         <div class="problem">
             <div class="measurement-container">
-                ${pencilHTML}
+                ${rectangleHTML}
                 ${measureBandHTML}
             </div>
             <div class="answer-box">${showAnswer ? answer : ''}</div>
@@ -71,9 +73,10 @@ const answersContainer = document.getElementById('answers-container');
 
 if (problemsContainer && answersContainer) {
     problemSet.forEach((problem, index) => {
+        const color = COLORS[index % COLORS.length];
         const showAnswerForWorksheet = index === 0;
-        const problemHTML = createProblemHTML(problem, showAnswerForWorksheet, config.decimal);
-        const answerHTML = createProblemHTML(problem, true, config.decimal);
+        const problemHTML = createProblemHTML(problem, showAnswerForWorksheet, config.decimal, color);
+        const answerHTML = createProblemHTML(problem, true, config.decimal, color);
 
         problemsContainer.innerHTML += problemHTML;
         answersContainer.innerHTML += answerHTML;
