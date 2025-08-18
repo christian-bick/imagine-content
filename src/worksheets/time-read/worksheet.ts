@@ -20,7 +20,7 @@ function formatTime(time: string, interval: number): string {
     return `${hour12}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-function createClock(time: string): string {
+function createClock(time: string, interval: number): string {
     const [h, m, s] = time.split(':').map(Number);
     const hourAngle = (h % 12 + m / 60) * 30;
     const minuteAngle = (m + s / 60) * 6;
@@ -44,6 +44,8 @@ function createClock(time: string): string {
         }
     }
 
+    const secondHand = interval <= 60 ? `<line class="hand second-hand" x1="50" y1="50" x2="50" y2="10" transform="rotate(${secondAngle} 50 50)"/>` : '';
+
     return `
         <svg class="clock" viewBox="0 0 100 100">
             <circle class="face" cx="50" cy="50" r="45"/>
@@ -51,14 +53,14 @@ function createClock(time: string): string {
             ${minuteMarks}
             <line class="hand hour-hand" x1="50" y1="50" x2="50" y2="25" transform="rotate(${hourAngle} 50 50)"/>
             <line class="hand minute-hand" x1="50" y1="50" x2="50" y2="15" transform="rotate(${minuteAngle} 50 50)"/>
-            <line class="hand second-hand" x1="50" y1="50" x2="50" y2="10" transform="rotate(${secondAngle} 50 50)"/>
+            ${secondHand}
         </svg>
     `;
 }
 
 // --- HTML GENERATION HELPER ---
 function createProblemHTML(problem: Problem, showAnswer: boolean, interval: number) {
-    const clockHTML = createClock(problem.time);
+    const clockHTML = createClock(problem.time, interval);
     const formattedTime = formatTime(problem.time, interval);
     return `
         <div class="problem">
