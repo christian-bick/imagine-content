@@ -70,13 +70,12 @@ export function generateConfigs(moduleName: string, generator: Generator): Confi
 }
 
 async function generatePdfs() {
-    const moduleName = process.env.MODULE;
-    console.log('MODULE=' + moduleName);
     const args = process.argv.slice(2);
+    const moduleName = args.find(arg => !arg.startsWith('--'));
     const isDryRun = args.includes('--dry');
 
     if (!moduleName) {
-        console.error('Please provide a module name using env MODULE.');
+        console.error('Please provide a module name as parameter');
         process.exit(1);
     }
 
