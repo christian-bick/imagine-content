@@ -24,6 +24,7 @@ function generateLabels(params: { [key: string]: any }) {
     const scopes = [
         Scope.ArabicNumerals,
         Scope.Base10,
+        Scope.NumbersWithoutNegatives,
         params.includesZero === 'true' ? Scope.NumbersWithZero : Scope.NumbersWithoutZero,
         ...numScopes([params.digits || 3]),
     ]
