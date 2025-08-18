@@ -29,15 +29,15 @@
     }
 
     .answer-box {
-        width: 4em; /* Accommodate answer in mm */
-        min-width: 4em;
+        width: 3em; /* Accommodate answer in mm */
+        min-width: 3em;
         height: 2.5em;
         border: 2px solid black;
         border-radius: 4px;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 1.2rem;
+        font-size: 1rem;
         color: forestgreen;
         margin-left: 20px;
     }

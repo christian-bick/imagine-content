@@ -14,21 +14,21 @@ function createMeasureBand(bandLength: number): string {
     let markers = '';
     for (let i = 0; i <= bandLength; i++) {
         // CM markers
-        markers += `<line x1="${i * 20}" y1="0" x2="${i * 20}" y2="20" stroke="black" stroke-width="1"/>`;
-        markers += `<text x="${i * 20}" y="40" text-anchor="middle" font-size="12">${i}</text>`;
+        markers += `<line x1="${i * 30}" y1="0" x2="${i * 30}" y2="20" stroke="black" stroke-width="1"/>`;
+        markers += `<text x="${i * 30}" y="40" text-anchor="middle" font-size="12">${i}</text>`;
 
         // MM markers
         if (i < bandLength) {
             for (let j = 1; j < 10; j++) {
                 const y2 = (j === 5) ? 14 : 10; // Longer line for 5mm mark
-                markers += `<line x1="${i * 20 + j * 2}" y1="0" x2="${i * 20 + j * 2}" y2="${y2}" stroke="black" stroke-width="0.5"/>`;
+                markers += `<line x1="${i * 30 + j * 3}" y1="0" x2="${i * 30 + j * 3}" y2="${y2}" stroke="black" stroke-width="0.5"/>`;
             }
         }
     }
 
     return `
-        <svg class="measure-band" viewBox="0 0 ${bandLength * 20} 50">
-            <rect x="0" y="0" width="${bandLength * 20}" height="20" fill="#f0f0f0" stroke="black" stroke-width="1"/>
+        <svg class="measure-band" viewBox="0 0 ${bandLength * 30} 50">
+            <rect x="0" y="0" width="${bandLength * 30}" height="20" fill="#f0f0f0" stroke="black" stroke-width="1"/>
             ${markers}
         </svg>
     `;
@@ -49,7 +49,7 @@ function createPencil(pencilLength: number, bandLength: number): string {
 function createProblemHTML(problem: Problem, showAnswer: boolean) {
     const measureBandHTML = createMeasureBand(problem.bandLength);
     const pencilHTML = createPencil(problem.problemLength, problem.bandLength);
-    const answer = (problem.problemLength * 10).toFixed(0); // Answer in mm
+    const answer = (problem.problemLength).toFixed(1); // Answer in mm
 
     return `
         <div class="problem">
@@ -57,7 +57,7 @@ function createProblemHTML(problem: Problem, showAnswer: boolean) {
                 ${pencilHTML}
                 ${measureBandHTML}
             </div>
-            <div class="answer-box">${showAnswer ? answer + ' mm' : ''}</div>
+            <div class="answer-box">${showAnswer ? answer : ''}</div>
         </div>`;
 }
 
