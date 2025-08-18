@@ -32,19 +32,20 @@ function generateProblems(params: { [key: string]: any }): number[][] {
 
 // --- CONFIGURATION ---
 function getConfig() {
-    const params = getParams(['includesZero']);
+    const params = getParams(['includesZero', 'desc']);
     return {
         includesZero: params.includesZero ? params.includesZero === 'true' : false,
+        desc: params.desc ? params.desc === 'true' : false,
     };
 }
 
 // --- HTML GENERATION ---
-function createProblemRowHTML(problem: number[], isFirstRow: boolean): string {
+function createProblemRowHTML(problem: number[], isFirstRow: boolean, desc: boolean): string {
     const unorderedNumbersHTML = problem.map(n => `<div class="number-box">${n}</div>`).join('');
 
-    const sortedNumbers = [...problem].sort((a, b) => a - b);
+    const sortedNumbers = [...problem].sort((a, b) => desc ? b - a : a - b);
 
-    const orderedBoxesHTML = sortedNumbers.map((n, i) => {
+    const orderedBoxesHTML = sortedNumbers.map((n) => {
         const boxClass = isFirstRow ? 'writing-box example' : 'writing-box';
         const content = isFirstRow ? n : '';
         return `<div class="${boxClass}">${content}</div>`;
@@ -66,7 +67,7 @@ if (problemsContainer) {
     const problems = generateProblems(config);
     problems.forEach((problem, index) => {
         const isFirstRow = index === 0;
-        const problemRowHTML = createProblemRowHTML(problem, isFirstRow);
+        const problemRowHTML = createProblemRowHTML(problem, isFirstRow, config.desc);
         problemsContainer.innerHTML += problemRowHTML;
     });
 }

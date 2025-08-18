@@ -1,15 +1,18 @@
 import {Ability, Area, Scope} from "edugraph-ts";
+import PermutationBuilder from "../../lib/permutation-builder.ts";
 
 // --- GENERATOR CONFIGURATION ---
 function generatePermutations() {
-    return [
-        {params: {includesZero: true}},
-        {params: {includesZero: false}},
-    ];
+    return new PermutationBuilder()
+        .applyVariants('includesZero', ['true', 'false'])
+        .applyVariants('desc', ['true', 'false'])
+        .build()
 }
 
 function generateName(params: { [key: string]: any }) {
-    return `ordering-numbers-${params.includesZero ? 'with-zero' : 'without-zero'}`;
+    const zeroPart = params.includesZero ? 'with-zero' : 'without-zero';
+    const orderPart = params.desc === 'true' ? 'desc' : 'asc';
+    return `ordering-numbers-${zeroPart}-${orderPart}`;
 }
 
 function generateLabels(params: { [key: string]: any }) {
