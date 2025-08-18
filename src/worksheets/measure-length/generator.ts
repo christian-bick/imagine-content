@@ -1,10 +1,11 @@
 import {Ability, Area, Scope} from "edugraph-ts";
+import PermutationBuilder from "../../lib/permutation-builder.ts";
 
 function generatePermutations() {
-    return [
-        {params: {bandLength: 10}},
-        {params: {bandLength: 20}},
-    ];
+    return new PermutationBuilder()
+        .applyVariants('bandLength', [10, 20])
+        .applyVariants('decimal', ['true', 'false'])
+        .build()
 }
 
 function generateName(params: { [key: string]: any }) {
@@ -14,15 +15,8 @@ function generateName(params: { [key: string]: any }) {
 function generateLabels(params: { [key: string]: any }) {
     return {
         Area: [Area.MeasuringObjects],
-        Ability: [Ability.ProcedureApplication, Ability.ReadingScales],
-        Scope: [
-            Scope.Base10,
-            Scope.ArabicNumerals,
-            Scope.NumbersWithoutZero,
-            Scope.NumbersWithoutNegatives,
-            Scope.CentimeterScale,
-            Scope.MillimeterScale,
-        ],
+        Ability: [Ability.ProcedureApplication, Ability.ProcedureExecution],
+        Scope: [Scope.CentimeterScale, Scope.MilimeterScale, Scope.Tapemeter],
     };
 }
 

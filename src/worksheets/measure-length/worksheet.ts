@@ -3,10 +3,11 @@ import { getParams } from "../../lib/params.ts";
 import { generateProblemSet, Problem } from "../../lib/measure-problems.ts";
 
 function getConfig() {
-    const params = getParams(['bandLength']);
+    const params = getParams(['bandLength', 'decimal']);
     return {
         bandLength: parseInt(params.bandLength || '20', 10),
         problemCount: 6,
+        decimal: params.decimal === 'true',
     };
 }
 
@@ -36,7 +37,7 @@ function createMeasureBand(bandLength: number): string {
 
 function createPencil(pencilLength: number, bandLength: number): string {
     const pencilWidth = 10; // Fixed width for the pencil
-    const displayLength = pencilLength * 20; // Convert cm to pixels for display
+    const displayLength = pencilLength * 30; // Convert cm to pixels for display
 
     return `
         <svg class="pencil" viewBox="0 0 ${displayLength}">
@@ -46,10 +47,10 @@ function createPencil(pencilLength: number, bandLength: number): string {
 }
 
 // --- HTML GENERATION ---
-function createProblemHTML(problem: Problem, showAnswer: boolean) {
+function createProblemHTML(problem: Problem, showAnswer: boolean, decimal: boolean) {
     const measureBandHTML = createMeasureBand(problem.bandLength);
     const pencilHTML = createPencil(problem.problemLength, problem.bandLength);
-    const answer = (problem.problemLength).toFixed(1); // Answer in mm
+    const answer = decimal ? (problem.problemLength).toFixed(1) : (problem.problemLength * 10).toFixed(0);
 
     return `
         <div class="problem">
@@ -71,8 +72,8 @@ const answersContainer = document.getElementById('answers-container');
 if (problemsContainer && answersContainer) {
     problemSet.forEach((problem, index) => {
         const showAnswerForWorksheet = index === 0;
-        const problemHTML = createProblemHTML(problem, showAnswerForWorksheet);
-        const answerHTML = createProblemHTML(problem, true);
+        const problemHTML = createProblemHTML(problem, showAnswerForWorksheet, config.decimal);
+        const answerHTML = createProblemHTML(problem, true, config.decimal);
 
         problemsContainer.innerHTML += problemHTML;
         answersContainer.innerHTML += answerHTML;
