@@ -39,8 +39,8 @@ function createClock(time: string, interval: number, isEmpty: boolean): string {
     for (let i = 0; i < 60; i++) {
         if (i % 5 !== 0) { // Don't draw over hour marks
             const angle = i * 6;
-            const x = 50 + 40 * Math.sin(angle * Math.PI / 180);
-            const y = 50 - 40 * Math.cos(angle * Math.PI / 180);
+            const x = 50 + 41 * Math.sin(angle * Math.PI / 180);
+            const y = 50 - 41 * Math.cos(angle * Math.PI / 180);
             minuteMarks += `<circle cx="${x}" cy="${y}" r="1" fill="#666"/>`;
         }
     }
@@ -69,7 +69,7 @@ function createProblemHTML(problem: Problem, showAnswer: boolean, interval: numb
     return `
         <div class="problem">
             ${clockHTML}
-            <div class="answer-box">${showAnswer || isReverse ? formattedTime : ''}</div>
+            <div class="answer-box ${isReverse ? 'reverse' : ''}">${showAnswer || isReverse ? formattedTime : ''}</div>
         </div>`;
 }
 
