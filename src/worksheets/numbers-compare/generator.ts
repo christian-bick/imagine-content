@@ -5,10 +5,17 @@ import {Ability, Area, Scope} from "edugraph-ts";
 import {numScopes} from "../../lib/labels.ts";
 
 function generatePermutations() {
-    return new PermutationBuilder()
-        .applyRange(['digits'], [1, 3])
-        .applyVariants('includesZero', ['true', 'false'])
-        .build()
+    return [
+        ...new PermutationBuilder()
+            .applyRange(['digits'], [2, 3])
+            .applyParams({includesZero: 'false'})
+            .build(),
+
+        ...new PermutationBuilder()
+            .applyParams({digits: 1})
+            .applyVariants('includesZero', ['true', 'false'])
+            .build()
+    ]
 }
 
 function generateName(params: { [key: string]: any }) {
