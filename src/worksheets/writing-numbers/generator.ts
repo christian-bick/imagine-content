@@ -2,8 +2,8 @@ import {Ability, Area, Scope} from "edugraph-ts";
 
 function generatePermutations() {
     return [
-        {order: 'default'},
-        {order: 'random'},
+        {params: {order: 'default'}},
+        {params: {order: 'random'}},
     ];
 }
 
@@ -21,7 +21,7 @@ function generateLabels(params: { [key: string]: any }) {
             Scope.Base10,
             Scope.NumbersWithoutNegatives,
             Scope.CountingSymbols,
-            Scope.NumberTiles
+            Scope.TenFrame
         ],
     };
 }
