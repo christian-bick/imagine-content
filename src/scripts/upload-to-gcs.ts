@@ -58,22 +58,19 @@ async function uploadDirectoryToGCS(bucketName: string, sync: boolean, dry: bool
             return;
         }
 
+        let remoteHashes = new Map<string, string | undefined>();
+        if (sync) {
+            console.log('Fetching remote file metadata...');
+            const [remoteFiles] = await bucket.getFiles();
+            remoteHashes = new Map(remoteFiles.map(file => [file.name, file.metadata.md5Hash]));
+            console.log(`Found ${remoteHashes.size} remote files.`);
+        }
+
         for (const filePath of filesToUpload) {
             const destination = relative(OUT_DIR, filePath).split('\\').join('/'); // Get relative path for GCS object name
 
             if (sync) {
-                const file = bucket.file(destination);
-                let remoteHash: string | undefined;
-                try {
-                    const [metadata] = await file.getMetadata();
-                    remoteHash = metadata.md5Hash;
-                } catch (e: any) {
-                    if (e.code !== 404) {
-                        console.error(`Error checking file gs://${bucketName}/${destination}:`, e.message);
-                        throw e;
-                    }
-                }
-
+                const remoteHash = remoteHashes.get(destination);
                 if (remoteHash) {
                     const localHash = await calculateMD5(filePath);
                     if (localHash === remoteHash) {
