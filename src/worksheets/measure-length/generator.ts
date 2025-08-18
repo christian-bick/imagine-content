@@ -16,7 +16,7 @@ function generateLabels(params: { [key: string]: any }) {
     return {
         Area: [Area.MeasuringObjects],
         Ability: [Ability.ProcedureApplication, Ability.ProcedureExecution],
-        Scope: [Scope.CentimeterScale, Scope.MilimeterScale, Scope.Tapemeter],
+        Scope: [Scope.CentimeterScale, Scope.MillimeterScale, Scope.Tapemeter],
     };
 }
 
