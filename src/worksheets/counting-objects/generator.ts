@@ -2,10 +2,10 @@ import {Ability, Area, Scope} from "edugraph-ts";
 
 function generatePermutations() {
     return [
-        {count: 5},
-        {count: 10},
-        {count: 15},
-        {count: 20},
+        {params: {count: 5}},
+        {params: {count: 10}},
+        {params: {count: 15}},
+        {params: {count: 20}},
     ];
 }
 

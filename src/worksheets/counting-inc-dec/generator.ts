@@ -2,12 +2,10 @@ import PermutationBuilder from "../../lib/permutation-builder.ts";
 import {Ability, Area, Scope} from "edugraph-ts";
 
 function generatePermutations() {
-    return [
-        new PermutationBuilder()
-            .applyVariants('max', [5, 9])
-            .applyVariants('type', ['inc', 'dec', 'mixed'])
-            .build()
-    ];
+    return new PermutationBuilder()
+        .applyVariants('max', [5, 9])
+        .applyVariants('type', ['inc', 'dec', 'mixed'])
+        .build();
 }
 
 function generateName(params: { [key: string]: any }) {
