@@ -1,9 +1,11 @@
 import 'dotenv/config'; // Load .env file at the very top
 import { Storage } from '@google-cloud/storage';
-import { readdir, stat } from 'fs/promises';
+import { readdir } from 'fs/promises';
 import { join, resolve, relative } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { createHash } from 'crypto';
+import { createReadStream } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,16 +13,27 @@ const __dirname = dirname(__filename);
 const PROJECT_ROOT = resolve(__dirname, '..', '..');
 const OUT_DIR = resolve(PROJECT_ROOT, 'out');
 
-async function uploadDirectoryToGCS(bucketName: string) {
-    if (!bucketName) {
-        console.error('Please provide a bucket name as an argument.');
-        process.exit(1);
-    }
+function calculateMD5(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const hash = createHash('md5');
+        const stream = createReadStream(filePath);
+        stream.on('data', (data) => hash.update(data));
+        stream.on('end', () => resolve(hash.digest('base64')));
+        stream.on('error', (err) => reject(err));
+    });
+}
 
+async function uploadDirectoryToGCS(bucketName: string, sync: boolean, dry: boolean) {
     const storage = new Storage();
     const bucket = storage.bucket(bucketName);
 
     console.log(`Starting upload of '${OUT_DIR}' to GCS bucket '${bucketName}'...`);
+    if (sync) {
+        console.log('Sync mode enabled: checking for existing files and comparing hashes.');
+    }
+    if (dry) {
+        console.log('Dry run mode enabled: no files will be uploaded.');
+    }
 
     try {
         const filesToUpload: string[] = [];
@@ -46,17 +59,45 @@ async function uploadDirectoryToGCS(bucketName: string) {
         }
 
         for (const filePath of filesToUpload) {
-            const destination = relative(OUT_DIR, filePath).replace(/\\/g, '/'); // Get relative path for GCS object name
-            console.log(`Uploading ${filePath} to gs://${bucketName}/${destination}`);
+            const destination = relative(OUT_DIR, filePath).split('\\').join('/'); // Get relative path for GCS object name
 
-            await bucket.upload(filePath, {
-                destination: destination,
-                // You can add more options here, e.g., contentType, predefinedAcl
-            });
-            console.log(`Uploaded ${destination}`);
+            if (sync) {
+                const file = bucket.file(destination);
+                let remoteHash: string | undefined;
+                try {
+                    const [metadata] = await file.getMetadata();
+                    remoteHash = metadata.md5Hash;
+                } catch (e: any) {
+                    if (e.code !== 404) {
+                        console.error(`Error checking file gs://${bucketName}/${destination}:`, e.message);
+                        throw e;
+                    }
+                }
+
+                if (remoteHash) {
+                    const localHash = await calculateMD5(filePath);
+                    if (localHash === remoteHash) {
+                        console.log(`Skipping ${filePath} (hashes match)`);
+                        continue;
+                    }
+                    console.log(`Hashes for ${filePath} differ. Re-uploading.`);
+                }
+            }
+
+            if (dry) {
+                console.log(`[DRY RUN] Would upload ${filePath} to gs://${bucketName}/${destination}`);
+            } else {
+                console.log(`Uploading ${filePath} to gs://${bucketName}/${destination}`);
+
+                await bucket.upload(filePath, {
+                    destination: destination,
+                    // You can add more options here, e.g., contentType, predefinedAcl
+                });
+                console.log(`Uploaded ${destination}`);
+            }
         }
 
-        console.log('All files uploaded successfully!');
+        console.log('All files processed successfully!');
     } catch (error) {
         console.error('Error during upload:', error);
         process.exit(1);
@@ -64,9 +105,21 @@ async function uploadDirectoryToGCS(bucketName: string) {
 }
 
 // Get bucket name from command line arguments
-const bucketName = process.argv[2];
+const args = process.argv.slice(2);
+const bucketName = args.find(arg => !arg.startsWith('--'));
 
-uploadDirectoryToGCS(bucketName).catch(error => {
+if (!bucketName) {
+    console.error('Please provide a bucket name as an argument.');
+    process.exit(1);
+}
+
+// Get sync flag, default to true
+const syncArg = args.find(arg => arg.startsWith('--sync='));
+const sync = syncArg ? syncArg.split('=')[1] !== 'false' : true;
+
+const dry = args.includes('--dry');
+
+uploadDirectoryToGCS(bucketName, sync, dry).catch(error => {
     console.error('Unhandled error:', error);
     process.exit(1);
 });

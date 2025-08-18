@@ -10,7 +10,8 @@
     "test": "vitest",
     "generate:pdf": "npx vite-node src/scripts/generate-pdf.ts",
     "generate:pdf:dry": "npx vite-node src/scripts/generate-pdf.ts --dry",
-    "upload:gcs": "npx vite-node src/scripts/upload-to-gcs.ts"
+    "upload:gcs": "npx vite-node src/scripts/upload-to-gcs.ts",
+    "upload:gcs:dry": "npx vite-node src/scripts/upload-to-gcs.ts --dry"
   },
   "devDependencies": {
     "@google-cloud/storage": "^7.16.0",
