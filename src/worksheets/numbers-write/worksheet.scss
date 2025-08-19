@@ -1,5 +1,9 @@
 @import "../base";
 
+.page.answer-key {
+    page-break-before: always;
+}
+
 .problems-container {
     display: flex;
     flex-direction: column;
@@ -33,6 +37,12 @@
         }
         .writing-box.example {
             color: forestgreen;
+        }
+        .writing-box.answer {
+            color: forestgreen;
+        }
+        .writing-box.outline {
+            color: #e0e0e0; /* Same as default, but explicitly set for clarity */
         }
     }
 

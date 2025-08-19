@@ -8,7 +8,8 @@ function generatePermutations() {
 }
 
 function generateName(params: { [key: string]: any }) {
-    return `writing-numbers-${params.order}`;
+    const outlinePart = params.outline === 'true' ? '-outline' : '';
+    return `writing-numbers-${params.order}${outlinePart}`;
 }
 
 function generateLabels(params: { [key: string]: any }) {

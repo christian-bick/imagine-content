@@ -3,25 +3,43 @@ import { getParams } from "../../lib/params.ts";
 
 // --- CONFIGURATION ---
 function getConfig() {
-    const params = getParams(['order']);
+    const params = getParams(['order', 'outline']);
     return {
         order: params.order || 'default',
         boxesPerRow: 5,
+        outline: params.outline === 'true',
     };
 }
 
 // --- HTML GENERATION ---
-function createProblemRowHTML(number: number, numBoxes: number, isFirstRow: boolean) {
+function createProblemRowHTML(number: number, numBoxes: number, isFirstRow: boolean, isAnswerKey: boolean, outline: boolean) {
     const boxesHTML = Array.from({ length: numBoxes }, (_, i) => {
-        const isFirstBox = isFirstRow && i === 0;
-        const boxClass = isFirstBox ? 'writing-box example' : 'writing-box';
-        return `<div class="${boxClass}">${number}</div>`;
+        let boxClass = 'writing-box';
+        let content: number | string = '';
+
+        if (isAnswerKey) {
+            boxClass += ' answer';
+            content = number;
+        } else {
+            if (isFirstRow) {
+                boxClass += ' example';
+                content = number;
+            } else {
+                if (outline) {
+                    boxClass += ' outline'; // Add outline class
+                    content = number; // Show number in light grey
+                } else {
+                    content = ''; // Hide number
+                }
+            }
+        }
+        return `<div class="${boxClass}">${content}</div>`;
     }).join('');
 
     const tenFrameHTML = `
         <div class="ten-frame">
             ${Array.from({ length: 10 }, (_, i) => {
-                const isFilled = isFirstRow && i < number;
+                const isFilled = isAnswerKey ? (i < number) : (isFirstRow && i < number);
                 const boxClass = isFilled ? 'ten-frame-box filled' : 'ten-frame-box';
                 return `<div class="${boxClass}"></div>`;
             }).join('')}
@@ -38,8 +56,9 @@ function createProblemRowHTML(number: number, numBoxes: number, isFirstRow: bool
 // --- MAIN LOGIC ---
 const config = getConfig();
 const problemsContainer = document.getElementById('problems-container');
+const answersContainer = document.getElementById('answers-container'); // Get answers container
 
-if (problemsContainer) {
+if (problemsContainer && answersContainer) { // Check both containers
     let numbers = Array.from({ length: 9 }, (_, i) => i + 1);
     if (config.order === 'random') {
         numbers = numbers.sort(() => Math.random() - 0.5);
@@ -47,7 +66,13 @@ if (problemsContainer) {
 
     numbers.forEach((number, index) => {
         const isFirstRow = index === 0;
-        const problemRowHTML = createProblemRowHTML(number, config.boxesPerRow, isFirstRow);
+        
+        // For Worksheet
+        const problemRowHTML = createProblemRowHTML(number, config.boxesPerRow, isFirstRow, false, config.outline); // isAnswerKey = false, pass outline
         problemsContainer.innerHTML += problemRowHTML;
+
+        // For Answer Key
+        const answerRowHTML = createProblemRowHTML(number, config.boxesPerRow, isFirstRow, true, config.outline); // isAnswerKey = true, pass outline
+        answersContainer.innerHTML += answerRowHTML;
     });
 }
