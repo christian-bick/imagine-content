@@ -40,8 +40,12 @@ function generateName(params: { [key: string]: any }) {
     const {operations = 'all', allowNegatives, blankPart = 'answer', includeTenCarry, includeZero} = params;
     let name = `single-digit_${operations.replaceAll(',', '-')}`;
     name += `_${blankPart}`;
-    name += includeTenCarry ? '_with-carry' : '_no-carry';
-    name += includeZero ? '_with-zero' : '_no-zero';
+    if (Object.prototype.hasOwnProperty.call(params, 'includeTenCarry')) {
+        name += includeTenCarry ? '_with-carry' : '_no-carry';
+    }
+    if (Object.prototype.hasOwnProperty.call(params, 'includeZero')) {
+        name += includeZero ? '_with-zero' : '_no-zero';
+    }
     if (allowNegatives) {
         name += '_neg';
     }

@@ -10,7 +10,7 @@ function generatePermutations() {
 }
 
 function generateName(params: { [key: string]: any }) {
-    const zeroPart = params.includesZero ? 'with-zero' : 'without-zero';
+    const zeroPart = params.includesZero === 'true' ? 'with-zero' : 'without-zero';
     const orderPart = params.desc === 'true' ? 'desc' : 'asc';
     return `ordering-numbers-${zeroPart}-${orderPart}`;
 }

@@ -12,7 +12,7 @@ function generatePermutations() {
 }
 
 function generateName(params: { [key: string]: any }) {
-    return `measure-length-${params.bandLength}cm_in-${params.decimal ? 'mm' : 'cm'}${params.reverse === 'true' ? '_reverse' : ''}`;
+    return `measure-length-${params.bandLength}cm_in-${params.decimal === 'true' ? 'mm' : 'cm'}${params.reverse === 'true' ? '_reverse' : ''}`;
 }
 
 function generateLabels(params: { [key: string]: any }) {
