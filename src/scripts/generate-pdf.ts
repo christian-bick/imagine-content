@@ -130,7 +130,7 @@ async function processConfiguration(
     hashSum.update(fullHtml);
     config.hash = hashSum.digest('hex');
 
-    const pageElements = await page.$('.page');
+    const pageElements = await page.$$('.page');
 
     if (pageElements.length === 0) {
         console.warn(`Warning: No .page elements found for ${url}. Skipping PDF and PNG generation.`);
@@ -138,7 +138,7 @@ async function processConfiguration(
     }
 
     const questionPageElement = pageElements[0];
-    const answerPageElement = pageElements[1];
+    const answerPageElement = pageElements.length > 1 ? pageElements[1] : undefined;
 
     // --- Generate Question PDF and PNG ---
     if (answerPageElement) {
@@ -187,8 +187,6 @@ async function generatePdfs() {
 
     const configGenerator = await loadConfigGenerator(moduleName);
     const configurations: Config[] = generateConfigs(moduleName, configGenerator);
-
-    console.log(configurations.map((config) => config.params))
 
     console.log('Launching browser...');
     const browser = await puppeteer.launch({headless: true});
