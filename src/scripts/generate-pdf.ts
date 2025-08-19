@@ -4,7 +4,7 @@ import {fileURLToPath} from 'url';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
 import {createHash} from 'crypto';
 import {getSortedUrlSearchParams} from "../lib/params.ts";
-import {config} from "dotenv";
+import {execSync} from "child_process"
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -213,6 +213,7 @@ async function generatePdfs() {
 
     // --- METADATA GENERATION ---
     console.log('Generating meta file...');
+    const versionHash = execSync('git rev-parse HEAD').toString().trim();
     const creationTimestamp = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
     const metaForJson = configurations.map(c => {
         const urlPath = getRelativeWorksheetUrl(moduleName, c.params);
@@ -225,6 +226,7 @@ async function generatePdfs() {
             source: urlPath, // For random generations this can be used to generate more of the same worksheet
             created: creationTimestamp,
             labels: c.labels,
+            versionHash: versionHash,
         };
     });
 
