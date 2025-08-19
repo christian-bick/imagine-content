@@ -2,13 +2,11 @@ import {Ability, Area, Scope} from "edugraph-ts";
 import PermutationBuilder from "../../lib/permutation-builder.ts";
 
 function generatePermutations() {
-    const permutations = new PermutationBuilder()
+    return new PermutationBuilder()
         .applyVariants('bandLength', [10, 20])
         .applyVariants('decimal', ['true', 'false'])
         .applyVariants('reverse', ['true', 'false'])
         .build()
-    console.log(permutations)
-    return permutations;
 }
 
 function generateName(params: { [key: string]: any }) {

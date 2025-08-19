@@ -1,9 +1,10 @@
-import puppeteer, { Page, ElementHandle } from 'puppeteer';
+import puppeteer, {Page, ElementHandle} from 'puppeteer';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
 import {createHash} from 'crypto';
 import {getSortedUrlSearchParams} from "../lib/params.ts";
+import {config} from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,7 +34,7 @@ async function loadConfigGenerator(moduleName: string): Promise<Generator> {
     const configGenerationPath = resolve(PROJECT_ROOT, 'src', 'worksheets', moduleName, 'generator.ts');
     try {
         // Use a file URL for dynamic import to ensure it's treated as a module path
-        const { default: generator } = await import('file:///' + configGenerationPath.replace(/\\/g, '/'));
+        const {default: generator} = await import('file:///' + configGenerationPath.replace(/\\/g, '/'));
         return generator
     } catch (error) {
         console.error(`Failed to load configuration for module: ${moduleName}`);
@@ -60,7 +61,7 @@ export function generateConfigs(moduleName: string, generator: Generator): Confi
     for (const perm of permutations) {
         const {params} = perm;
         const name = generator.generateName(params);
-        const labels  = generator.generateLabels(params);
+        const labels = generator.generateLabels(params);
         expandedConfigs.push({
             questionDoc: `${moduleName}_${name}_question.pdf`,
             answerDoc: `${moduleName}_${name}_answer.pdf`,
@@ -187,6 +188,8 @@ async function generatePdfs() {
     const configGenerator = await loadConfigGenerator(moduleName);
     const configurations: Config[] = generateConfigs(moduleName, configGenerator);
 
+    console.log(configurations.map((config) => config.params))
+
     console.log('Launching browser...');
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
@@ -195,7 +198,7 @@ async function generatePdfs() {
 
     // Ensure the module-specific output directory exists
     if (!existsSync(moduleOutputDir)) {
-        mkdirSync(moduleOutputDir, { recursive: true });
+        mkdirSync(moduleOutputDir, {recursive: true});
     }
 
     for (const config of configurations) {
