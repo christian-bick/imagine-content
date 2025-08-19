@@ -113,12 +113,23 @@ async function processConfiguration(
     page: Page
 ) {
     const url = getWorksheetUrl(moduleName, config.params);
-    let hashSum = createHash('sha256');
+    const hashSum = createHash('sha256');
 
     console.log(`Navigating to ${url}`);
     await page.goto(url, {waitUntil: 'networkidle0'});
 
-    const pageElements = await page.$$('.page');
+    // Generate hash from the full DOM content before manipulating visibility
+
+    // This will reflect CSS changes as well as long as we use vite's default css bundling as it
+    // generates a has as part of the css name.
+    // All changes to the Javascript logic including permutations is already reflected in the dom
+    // as we are only using JS to generate static content and not for interactions here.
+
+    const fullHtml = await page.content();
+    hashSum.update(fullHtml);
+    config.hash = hashSum.digest('hex');
+
+    const pageElements = await page.$('.page');
 
     if (pageElements.length === 0) {
         console.warn(`Warning: No .page elements found for ${url}. Skipping PDF and PNG generation.`);
@@ -159,11 +170,6 @@ async function processConfiguration(
         delete config.answerDoc;
         delete config.answerImage;
     }
-
-    // Calculate SHA256 hash (for questionDoc only)
-    const fileBuffer = readFileSync(resolve(moduleOutputDir, config.questionDoc));
-    hashSum.update(fileBuffer);
-    config.hash = hashSum.digest('hex');
 }
 
 async function generatePdfs() {
@@ -210,12 +216,12 @@ async function generatePdfs() {
     const metaForJson = configurations.map(c => {
         const urlPath = getRelativeWorksheetUrl(moduleName, c.params);
         return {
-            hash: c.hash,
+            contentHash: c.hash,
             questionDoc: c.questionDoc,
             answerDoc: c.answerDoc, // Will be undefined if not generated
             questionImage: c.questionImage,
             answerImage: c.answerImage, // Will be undefined if not generated
-            source: urlPath,
+            source: urlPath, // For random generations this can be used to generate more of the same worksheet
             created: creationTimestamp,
             labels: c.labels,
         };
