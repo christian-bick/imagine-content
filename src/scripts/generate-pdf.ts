@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { Page, ElementHandle } from 'puppeteer';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
@@ -19,11 +19,13 @@ interface Generator {
 }
 
 interface Config {
-    filename: string;
-    preview: string;
+    questionDoc: string;
+    answerDoc?: string; // Optional, as it might not exist
+    questionImage: string;
+    answerImage?: string; // Optional
     params: any;
     labels: any;
-    hash?: string;
+    hash?: string; // This hash will be for the questionDoc
 }
 
 async function loadConfigGenerator(moduleName: string): Promise<Generator> {
@@ -56,17 +58,112 @@ export function generateConfigs(moduleName: string, generator: Generator): Confi
     const expandedConfigs: Config[] = [];
     const permutations = generator.generatePermutations();
     for (const perm of permutations) {
-        const {params} = perm; // Extract labels here
+        const {params} = perm;
         const name = generator.generateName(params);
         const labels  = generator.generateLabels(params);
         expandedConfigs.push({
-            filename: `${moduleName}_${name}.pdf`,
-            preview: `${moduleName}_${name}.png`,
+            questionDoc: `${moduleName}_${name}_question.pdf`,
+            answerDoc: `${moduleName}_${name}_answer.pdf`,
+            questionImage: `${moduleName}_${name}_question.png`,
+            answerImage: `${moduleName}_${name}_answer.png`,
             params: params,
             labels: labels
         });
     }
     return expandedConfigs;
+}
+
+// Helper function to generate PDF and PNG for a given page element
+async function generatePagePdfAndPng(
+    page: Page,
+    element: ElementHandle,
+    pdfPath: string,
+    imagePath: string,
+    logPrefix: string
+) {
+    console.log(`Generating ${logPrefix} PDF for: ${pdfPath}`);
+    await page.pdf({
+        path: pdfPath,
+        format: 'A4',
+        printBackground: true
+    });
+    console.log(`${logPrefix} PDF generated at: ${pdfPath}`);
+
+    console.log(`Generating ${logPrefix} PNG preview for: ${imagePath}`);
+    await element.screenshot({
+        path: imagePath,
+        type: 'png',
+    });
+    console.log(`${logPrefix} PNG preview generated at: ${imagePath}`);
+}
+
+// Helper function to toggle page visibility
+async function togglePageVisibility(page: Page, selector: string, display: string) {
+    await page.evaluate((sel, disp) => {
+        const el = document.querySelector(sel) as HTMLElement;
+        if (el) el.style.display = disp;
+    }, selector, display);
+}
+
+// Function to process a single configuration
+async function processConfiguration(
+    config: Config,
+    moduleName: string,
+    moduleOutputDir: string,
+    page: Page
+) {
+    const url = getWorksheetUrl(moduleName, config.params);
+    let hashSum = createHash('sha256');
+
+    console.log(`Navigating to ${url}`);
+    await page.goto(url, {waitUntil: 'networkidle0'});
+
+    const pageElements = await page.$$('.page');
+
+    if (pageElements.length === 0) {
+        console.warn(`Warning: No .page elements found for ${url}. Skipping PDF and PNG generation.`);
+        return;
+    }
+
+    const questionPageElement = pageElements[0];
+    const answerPageElement = pageElements[1];
+
+    // --- Generate Question PDF and PNG ---
+    if (answerPageElement) {
+        await togglePageVisibility(page, '.page:nth-of-type(2)', 'none');
+    }
+    await generatePagePdfAndPng(
+        page,
+        questionPageElement,
+        resolve(moduleOutputDir, config.questionDoc),
+        resolve(moduleOutputDir, config.questionImage),
+        'Question'
+    );
+    if (answerPageElement) {
+        await togglePageVisibility(page, '.page:nth-of-type(2)', '');
+    }
+
+    // --- Generate Answer PDF and PNG (if answer page exists) ---
+    if (answerPageElement) {
+        await togglePageVisibility(page, '.page:nth-of-type(1)', 'none');
+        await generatePagePdfAndPng(
+            page,
+            answerPageElement,
+            resolve(moduleOutputDir, config.answerDoc!),
+            resolve(moduleOutputDir, config.answerImage!),
+            'Answer'
+        );
+        await togglePageVisibility(page, '.page:nth-of-type(1)', '');
+    } else {
+        console.log(`No second .page element found for ${url}. Skipping answer key PDF and PNG.`);
+        delete config.answerDoc;
+        delete config.answerImage;
+    }
+
+    // Calculate SHA256 hash (for questionDoc only)
+    const fileBuffer = readFileSync(resolve(moduleOutputDir, config.questionDoc));
+    hashSum.update(fileBuffer);
+    config.hash = hashSum.digest('hex');
 }
 
 async function generatePdfs() {
@@ -96,46 +193,12 @@ async function generatePdfs() {
     }
 
     for (const config of configurations) {
-        const url = getWorksheetUrl(moduleName, config.params);
-        let hashSum = createHash('sha256');
         if (isDryRun) {
+            const url = getWorksheetUrl(moduleName, config.params);
             console.log(`Dry run: ${url}`);
         } else {
-            console.log(`Navigating to ${url}`);
-            await page.goto(url, {waitUntil: 'networkidle0'});
-
-            console.log(`Generating PDF for: ${config.filename}`);
-            const pdfPath = resolve(moduleOutputDir, config.filename);
-            await page.pdf({
-                path: pdfPath,
-                format: 'A4',
-                printBackground: true
-            });
-            console.log(`PDF generated at: ${pdfPath}`);
-
-            // Generate web-optimized PNG preview
-            const pngFilename = config.filename.replace(/\.pdf$/, '.png');
-            const pngPath = resolve(moduleOutputDir, pngFilename);
-            console.log(`Generating PNG preview for: ${pngFilename}`);
-
-            const worksheetElement = await page.$('#worksheet'); // Find the element by ID
-            if (worksheetElement) {
-                await worksheetElement.screenshot({ // Take screenshot of the element
-                    path: pngPath,
-                    type: 'png',
-                });
-                console.log(`PNG preview generated at: ${pngPath}`);
-            } else {
-                console.warn(`Warning: Element with id="worksheet" not found for ${config.filename}. Skipping PNG preview.`);
-            }
-
-            // Calculate SHA256 hash
-            const fileBuffer = readFileSync(pdfPath);
-            const hashSum = createHash('sha256');
-            hashSum.update(fileBuffer);
+            await processConfiguration(config, moduleName, moduleOutputDir, page);
         }
-        // Add hash to the configuration object
-        config.hash = hashSum.digest('hex');
     }
 
     await browser.close();
@@ -148,8 +211,10 @@ async function generatePdfs() {
         const urlPath = getRelativeWorksheetUrl(moduleName, c.params);
         return {
             hash: c.hash,
-            filename: c.filename,
-            preview: c.preview,
+            questionDoc: c.questionDoc,
+            answerDoc: c.answerDoc, // Will be undefined if not generated
+            questionImage: c.questionImage,
+            answerImage: c.answerImage, // Will be undefined if not generated
             source: urlPath,
             created: creationTimestamp,
             labels: c.labels,
@@ -165,4 +230,3 @@ generatePdfs().catch(error => {
     console.error('Error generating PDFs:', error);
     process.exit(1);
 });
-
