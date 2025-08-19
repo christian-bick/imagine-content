@@ -40,6 +40,21 @@
         font-size: 1rem;
         color: forestgreen;
         margin-left: 20px;
+        position: relative;
+
+        &.reverse {
+            color: black;
+        }
+
+        &[data-unit]::after {
+            content: attr(data-unit);
+            position: absolute;
+            bottom: -1.4em;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: dimgray;
+        }
     }
 }
 

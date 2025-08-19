@@ -5,6 +5,7 @@ function generatePermutations() {
     return new PermutationBuilder()
         .applyVariants('bandLength', [10, 20])
         .applyVariants('decimal', ['true', 'false'])
+        .applyVariants('reverse', ['true', 'false'])
         .build()
 }
 
@@ -14,7 +15,7 @@ function generateName(params: { [key: string]: any }) {
 
 function generateLabels(params: { [key: string]: any }) {
     return {
-        Area: [Area.MeasuringObjects],
+        Area: [Area.MeasuringObjects, Area.DigitNotation],
         Ability: [Ability.ProcedureApplication, Ability.ProcedureExecution],
         Scope: [Scope.CentimeterScale, Scope.MillimeterScale, Scope.Tapemeter],
     };

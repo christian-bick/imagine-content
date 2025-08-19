@@ -3,11 +3,12 @@ import { getParams } from "../../lib/params.ts";
 import { generateProblemSet, Problem } from "../../lib/measure-problems.ts";
 
 function getConfig() {
-    const params = getParams(['bandLength', 'decimal']);
+    const params = getParams(['bandLength', 'decimal', 'reverse']);
     return {
         bandLength: parseInt(params.bandLength || '20', 10),
         problemCount: 6,
         decimal: params.decimal === 'true',
+        reverse: params.reverse === 'true',
     };
 }
 
@@ -49,10 +50,30 @@ function createRectangle(length: number, color: string): string {
 }
 
 // --- HTML GENERATION ---
-function createProblemHTML(problem: Problem, showAnswer: boolean, decimal: boolean, color: string) {
+function createProblemHTML(problem: Problem, config: { decimal: boolean, reverse: boolean }, color: string, index: number, isAnswerSheet: boolean) {
     const measureBandHTML = createMeasureBand(problem.bandLength);
-    const rectangleHTML = createRectangle(problem.problemLength, color);
-    const answer = decimal ? (problem.problemLength).toFixed(1) : (problem.problemLength * 10).toFixed(0);
+
+    const isFirst = index === 0;
+
+    const showRectangle = !config.reverse || isAnswerSheet || isFirst;
+    const showAnswerInBox = config.reverse || isAnswerSheet || isFirst;
+
+    let rectColor = color;
+    if (config.reverse) {
+        // In reverse mode, the drawn rectangle is the answer, so it should be green.
+        // For the worksheet, the first example is also green.
+        rectColor = 'forestgreen';
+    }
+
+    const rectangleHTML = showRectangle ? createRectangle(problem.problemLength, rectColor) : '<svg class="measured-rectangle"></svg>';
+
+    const answer = config.decimal ? (problem.problemLength).toFixed(1) : (problem.problemLength * 10).toFixed(0);
+    const unit = config.decimal ? 'cm' : 'mm';
+
+    const answerBoxClasses = ['answer-box'];
+    if (config.reverse) {
+        answerBoxClasses.push('reverse');
+    }
 
     return `
         <div class="problem">
@@ -60,7 +81,7 @@ function createProblemHTML(problem: Problem, showAnswer: boolean, decimal: boole
                 ${rectangleHTML}
                 ${measureBandHTML}
             </div>
-            <div class="answer-box">${showAnswer ? answer : ''}</div>
+            <div class="${answerBoxClasses.join(' ')}" data-unit="${unit}">${showAnswerInBox ? answer : ''}</div>
         </div>`;
 }
 
@@ -74,9 +95,8 @@ const answersContainer = document.getElementById('answers-container');
 if (problemsContainer && answersContainer) {
     problemSet.forEach((problem, index) => {
         const color = COLORS[index % COLORS.length];
-        const showAnswerForWorksheet = index === 0;
-        const problemHTML = createProblemHTML(problem, showAnswerForWorksheet, config.decimal, color);
-        const answerHTML = createProblemHTML(problem, true, config.decimal, color);
+        const problemHTML = createProblemHTML(problem, config, color, index, false);
+        const answerHTML = createProblemHTML(problem, config, color, index, true);
 
         problemsContainer.innerHTML += problemHTML;
         answersContainer.innerHTML += answerHTML;
