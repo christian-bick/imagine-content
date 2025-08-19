@@ -1,5 +1,9 @@
 @import "../base";
 
+.page.answer-key {
+    page-break-before: always;
+}
+
 .problems-container {
     display: flex;
     flex-direction: column;
@@ -52,6 +56,10 @@
             font-size: 1.75rem;
         }
         .writing-box.example {
+            color: forestgreen;
+            font-weight: bold;
+        }
+        .writing-box.answer {
             color: forestgreen;
             font-weight: bold;
         }

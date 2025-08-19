@@ -40,14 +40,22 @@ function getConfig() {
 }
 
 // --- HTML GENERATION ---
-function createProblemRowHTML(problem: number[], isFirstRow: boolean, desc: boolean): string {
+function createProblemRowHTML(problem: number[], isFirstRow: boolean, desc: boolean, isAnswerKey: boolean): string {
     const unorderedNumbersHTML = problem.map(n => `<div class="number-box">${n}</div>`).join('');
 
     const sortedNumbers = [...problem].sort((a, b) => desc ? b - a : a - b);
 
     const orderedBoxesHTML = sortedNumbers.map((n) => {
-        const boxClass = isFirstRow ? 'writing-box example' : 'writing-box';
-        const content = isFirstRow ? n : '';
+        let boxClass = 'writing-box';
+        let content: number | string = '';
+
+        if (isAnswerKey) {
+            boxClass += ' answer';
+            content = n;
+        } else {
+            boxClass += isFirstRow ? ' example' : '';
+            content = isFirstRow ? n : '';
+        }
         return `<div class="${boxClass}">${content}</div>`;
     }).join('');
 
@@ -62,12 +70,19 @@ function createProblemRowHTML(problem: number[], isFirstRow: boolean, desc: bool
 // --- MAIN LOGIC ---
 const config = getConfig();
 const problemsContainer = document.getElementById('problems-container');
+const answersContainer = document.getElementById('answers-container'); // Get answers container
 
-if (problemsContainer) {
+if (problemsContainer && answersContainer) { // Check both containers
     const problems = generateProblems(config);
     problems.forEach((problem, index) => {
         const isFirstRow = index === 0;
-        const problemRowHTML = createProblemRowHTML(problem, isFirstRow, config.desc);
+        
+        // For Worksheet
+        const problemRowHTML = createProblemRowHTML(problem, isFirstRow, config.desc, false); // isAnswerKey = false
         problemsContainer.innerHTML += problemRowHTML;
+
+        // For Answer Key
+        const answerRowHTML = createProblemRowHTML(problem, isFirstRow, config.desc, true); // isAnswerKey = true
+        answersContainer.innerHTML += answerRowHTML;
     });
 }
