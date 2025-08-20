@@ -20,10 +20,9 @@ function generateLabels(params: { [key: string]: any }) {
             Scope.NumbersSmaller10,
             Scope.Base10,
             Scope.NumbersWithoutNegatives,
-            Scope.CountingSymbols,
             Scope.TenFrame
         ],
-        Ability: [Ability.Formalization],
+        Ability: [Ability.Formalization, Ability.WritingSpeed],
     };
 }
 
