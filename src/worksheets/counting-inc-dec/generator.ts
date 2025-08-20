@@ -23,7 +23,6 @@ function generateLabels(params: { [key: string]: any }) {
     }
     return {
         Area: [Area.Numeration, ...areas],
-        Ability: [Ability.Formalization, Ability.ProcedureIdentification, Ability.ProcedureExecution],
         Scope: [
             Scope.NumbersSmaller10,
             Scope.ArabicNumerals,
@@ -31,6 +30,7 @@ function generateLabels(params: { [key: string]: any }) {
             Scope.NumbersWithoutZero,
             Scope.CountingSymbols
         ],
+        Ability: [Ability.Formalization, Ability.ProcedureIdentification, Ability.ProcedureExecution],
     };
 }
 

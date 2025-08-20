@@ -73,7 +73,7 @@ function generateLabels(params: { [key: string]: any }) {
 
     const areas = params.operations.split(',').map((op: string) => {
         const mapping: { [key: string]: Area } = {
-            add: Area.IntegerAdditon,
+            add: Area.IntegerAddition,
             subtract: Area.IntegerSubtraction,
             divide: Area.IntegerDivision,
             multiply: Area.IntegerMultiplication
@@ -86,9 +86,9 @@ function generateLabels(params: { [key: string]: any }) {
     abilities.push(Ability.ProcedureApplication)
 
     return {
-        Ability: abilities,
+        Area: areas,
         Scope: scopes,
-        Area: areas
+        Ability: abilities,
     }
 }
 

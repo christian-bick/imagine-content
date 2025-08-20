@@ -37,8 +37,8 @@ function generateLabels(params: { [key: string]: any }) {
     }
     return {
         Area: [Area.MeasuringTime],
-        Ability: [Ability.ProcedureApplication, Ability.ProcedureExecution],
         Scope: [Scope.AnalogClock, intervalScope],
+        Ability: [Ability.ProcedureApplication, Ability.ProcedureExecution],
     }
 }
 

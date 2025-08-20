@@ -15,7 +15,6 @@ function generateName(params: { [key: string]: any }) {
 function generateLabels(params: { [key: string]: any }) {
     return {
         Area: [Area.NumberNotation],
-        Ability: [Ability.Formalization],
         Scope: [
             Scope.ArabicNumerals,
             Scope.NumbersSmaller10,
@@ -24,6 +23,7 @@ function generateLabels(params: { [key: string]: any }) {
             Scope.CountingSymbols,
             Scope.TenFrame
         ],
+        Ability: [Ability.Formalization],
     };
 }
 
