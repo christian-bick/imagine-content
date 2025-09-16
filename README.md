@@ -49,6 +49,14 @@ This will create the PDF files in the `dist` directory. To run without creating 
 npm run generate:dry
 ```
 
+### Running Tests
+
+To run the test suite, use the `test` script:
+
+```bash
+npm run test
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue.
