@@ -79,7 +79,7 @@ Each worksheet module within `src/worksheets` follows this general structure:
 
 Each worksheet generator (`generator.ts`) is responsible for producing not just the content of the worksheet, but also a set of descriptive metadata. This is handled by the `generateLabels` function within each generator.
 
-These labels are imported from the `edugraph-ts` library and provide a standardized way to describe the educational competences addressed for each worksheet using the EduGraph ontology
+These labels are imported from the `edugraph-ts` library and provide a standardized way to describe the educational competences addressed for each worksheet using the [EduGraph ontology](https://github.com/christian-bick/edugraph-ontology).
 
 This metadata can be used for:
 
