@@ -95,8 +95,8 @@ under a creative commons license, but also
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL License with an additional clause:
 
-All content generated from this repository MUST be redistributed under the following creative commons license:
+Generated learning material can only be redistributed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) creative commons license
 
-[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+See the [LICENSE](LICENSE) file for details.
