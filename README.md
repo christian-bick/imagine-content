@@ -91,7 +91,9 @@ This metadata can be used for:
 
 Contributions are particularly welcome and least complicate in the form of new worksheet modules. Please feel free to submit a new module via pull request!
 
-By contributing this, you not only add to a growing database of worksheets available to everyone forever under a creative commons license, but also add to a repository of labeled training data to train open source AI education models.
+By contributing this way, you not only add to a growing database of worksheets available to everyone forever under a creative commons license, but also add to a repository of labeled training data to train open source AI education models.
+
+For all other forms of contribution, it is highly recommended to open an issue in advance.
 
 ## License
 
