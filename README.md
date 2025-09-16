@@ -99,4 +99,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 All content generated from this repository MUST be redistributed under the following creative commons license:
 
-(a href="https://creativecommons.org/licenses/by-nc-sa/4.0/")[CC BY-NC-SA 4.0]
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
