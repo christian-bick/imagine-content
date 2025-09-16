@@ -4,7 +4,7 @@
 
 Imagine Content is a powerful tool for generating printable, educational worksheets for children. This project provides a flexible and extensible framework for creating a wide variety of math-related exercises, from basic counting to more complex arithmetic problems.
 
-The worksheets are defined programmatically and rendered into HTML, which can then be converted into PDFs for easy printing and distribution.
+The worksheets are defined programmatically and rendered into HTML to simplify stlying and debugging. During generation these HTML previews into PDFs for easy printing and distribution.
 
 ## Getting Started
 
@@ -89,9 +89,9 @@ This metadata can be used for:
 
 ## Contributing
 
-Contributions are particularly welcome in the form of new workshett modules! Please feel free to submit a pull request or open an issue. 
+Contributions are particularly welcome and least complicate in the form of new worksheet modules. Please feel free to submit a new module via pull request!
 
-You not only add to a growing database of worksheets available to everyone under a creative commons license, but also add to a repository of labeled training data to train open source AI education models.
+By contributing this, you not only add to a growing database of worksheets available to everyone forever under a creative commons license, but also add to a repository of labeled training data to train open source AI education models.
 
 ## License
 
