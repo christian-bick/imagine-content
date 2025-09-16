@@ -97,6 +97,6 @@ under a creative commons license, but also
 
 This project is licensed under the AGPL License with an *additional condition*:
 
-Generated learning material can only be redistributed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) creative commons license
+Generated learning material can only be redistributed under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) creative commons license.
 
 See the [LICENSE](LICENSE) file for details.
