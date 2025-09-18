@@ -1,7 +1,7 @@
 import puppeteer, {Page, ElementHandle} from 'puppeteer';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
-import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'fs';
+import {existsSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'fs';
 import {createHash} from 'crypto';
 import {getSortedUrlSearchParams} from "../lib/params.ts";
 import {execSync} from "child_process"
@@ -29,7 +29,7 @@ interface Config {
     hash?: string; // This hash will be for the questionDoc
 }
 
-async function loadConfigGenerator(moduleName: string): Promise<Generator> {
+export async function loadConfigGenerator(moduleName: string): Promise<Generator> {
     // Resolve the path relative to the project root
     const configGenerationPath = resolve(PROJECT_ROOT, 'src', 'worksheets', moduleName, 'generator.ts');
     try {
@@ -173,7 +173,9 @@ async function processConfiguration(
     }
 }
 
-async function generatePdfs() {
+export async function generatePdfs(dependencies?: { loadConfig?: typeof loadConfigGenerator }) {
+    const loadConfig = dependencies?.loadConfig ?? loadConfigGenerator;
+
     const args = process.argv.slice(2);
     const moduleName = args.find(arg => !arg.startsWith('--'));
     const isDryRun = args.includes('--dry');
@@ -185,7 +187,7 @@ async function generatePdfs() {
 
     console.log(`Generating PDFs for module: ${moduleName}`);
 
-    const configGenerator = await loadConfigGenerator(moduleName);
+    const configGenerator = await loadConfig(moduleName);
     const configurations: Config[] = generateConfigs(moduleName, configGenerator);
 
     console.log('Launching browser...');
@@ -193,16 +195,33 @@ async function generatePdfs() {
     const page = await browser.newPage();
 
     const moduleOutputDir = resolve(OUT_DIR, moduleName);
+    const generatedFileNames = new Set<string>();
 
-    // Ensure the module-specific output directory exists
-    if (!existsSync(moduleOutputDir)) {
+    // Ensure we start with a clean directory for the generation run
+    if (!isDryRun) {
+        if (existsSync(moduleOutputDir)) {
+            console.log(`Cleaning output directory: ${moduleOutputDir}`);
+            rmSync(moduleOutputDir, {recursive: true, force: true});
+        }
         mkdirSync(moduleOutputDir, {recursive: true});
     }
 
     for (const config of configurations) {
+        // Safeguard against overwriting files in the same run
+        if (generatedFileNames.has(config.questionDoc)) {
+            throw new Error(`Duplicate filename detected in the same run: ${config.questionDoc}. This indicates an issue with the module's generateName function producing non-unique names.`);
+        }
+        generatedFileNames.add(config.questionDoc);
+        if (config.answerDoc) {
+            if (generatedFileNames.has(config.answerDoc)) {
+                throw new Error(`Duplicate filename detected in the same run: ${config.answerDoc}. This indicates an issue with the module's generateName function producing non-unique names.`);
+            }
+            generatedFileNames.add(config.answerDoc);
+        }
+
         if (isDryRun) {
             const url = getWorksheetUrl(moduleName, config.params);
-            console.log(`Dry run: ${url}`);
+            console.log(`Dry run: Would generate for ${url} -> ${config.questionDoc}`);
         } else {
             await processConfiguration(config, moduleName, moduleOutputDir, page);
         }
@@ -235,7 +254,10 @@ async function generatePdfs() {
     console.log(`Meta file generated at: ${metaPath}`);
 }
 
-generatePdfs().catch(error => {
-    console.error('Error generating PDFs:', error);
-    process.exit(1);
-});
+// This allows the script to be imported for testing without executing
+if (import.meta.env.VITEST === undefined) {
+    generatePdfs().catch(error => {
+        console.error('Error generating PDFs:', error);
+        process.exit(1);
+    });
+}
