@@ -39,7 +39,7 @@ function generatePermutations() {
 }
 
 function generateName(params: { [key: string]: any }) {
-    const {digitsNum1, digitsNum2, operations = 'all', allowNegatives, blankPart = 'answer'} = params;
+    const {digitsNum1, digitsNum2, operations, allowNegatives, blankPart} = params;
     let name = `${digitsNum1 || 'R'}x${digitsNum2 || 'R'}_hide_${blankPart}_for_${operations.replaceAll(',', '-')}`;
     if (allowNegatives) {
         name += '_neg';

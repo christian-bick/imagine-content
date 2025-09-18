@@ -10,7 +10,7 @@ function generatePermutations() {
         ...new PermutationBuilder()
             .applyRange(['digitsNum1', "digitsNum2"], [2, 5])
             .applyVariants('operations', ['add', 'subtract'])
-            .applyVariants('allowNegatives', ['false', 'true'])
+            .applyVariants('allowNegatives', [false, true])
             .build(),
 
         ...new PermutationBuilder()
