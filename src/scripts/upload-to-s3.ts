@@ -111,10 +111,8 @@ if (!bucketName) {
     console.error('Please provide a bucket name as an argument.');
     process.exit(1);
 }
-
-const syncArg = args.find(arg => arg.startsWith('--sync='));
-const sync = syncArg ? syncArg.split('=')[1] !== 'false' : true;
-
+;
+const sync = args.includes('--sync');
 const dry = args.includes('--dry');
 
 uploadDirectoryToS3(bucketName, sync, dry).catch(error => {

@@ -9,11 +9,13 @@
     "preview": "vite preview",
     "test": "vitest",
     "generate": "npx vite-node src/scripts/generate-pdf.ts",
-    "generate:dry": "npx vite-node src/scripts/generate-pdf.ts --dry",
+    "generate:dry": "npx vite-node src/scripts/generate-pdf.ts --sync --dry",
     "upload:gcs": "npx vite-node src/scripts/upload-to-gcs.ts",
-    "upload:gcs:dry": "npx vite-node src/scripts/upload-to-gcs.ts --dry",
+    "sync:gcs": "npx vite-node src/scripts/upload-to-gcs.ts --sync",
+    "sync:gcs:dry": "npx vite-node src/scripts/upload-to-gcs.ts --sync --dry",
     "upload:s3": "npx vite-node src/scripts/upload-to-s3.ts",
-    "upload:s3:dry": "npx vite-node src/scripts/upload-to-s3.ts --dry"
+    "sync:s3": "npx vite-node src/scripts/upload-to-s3.ts --sync",
+    "sync:s3:dry": "npx vite-node src/scripts/upload-to-s3.ts --sync --dry"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.525.0",
