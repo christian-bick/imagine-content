@@ -62,13 +62,12 @@ describe('generatePdfs', () => {
         // Arrange
         const mockLoadConfig = vi.fn().mockResolvedValue(mockGenerator);
         // Set args for the test module, excluding the script path itself
-        process.argv = ['node', 'vite-node', 'test-module'];
 
         const fs = await import('fs');
         const puppeteer = (await import('puppeteer')).default;
 
         // Act
-        await generatePdfs({loadConfig: mockLoadConfig});
+        await generatePdfs('test-module', {loadConfig: mockLoadConfig});
 
         // Assert
         expect(mockLoadConfig).toHaveBeenCalledWith('test-module');
@@ -89,10 +88,9 @@ describe('generatePdfs', () => {
             generateLabels: () => ({}),
         };
         const mockLoadConfig = vi.fn().mockResolvedValue(mockDuplicateGenerator);
-        process.argv = ['node', 'vite-node', 'test-module'];
 
         // Act & Assert
-        await expect(generatePdfs({loadConfig: mockLoadConfig}))
+        await expect(generatePdfs('test-module', {loadConfig: mockLoadConfig}))
             .rejects.toThrow('Duplicate filename detected in the same run: test-module_duplicate-name_question.pdf');
     });
 });

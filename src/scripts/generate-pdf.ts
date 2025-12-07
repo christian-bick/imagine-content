@@ -173,17 +173,12 @@ async function processConfiguration(
     }
 }
 
-export async function generatePdfs(dependencies?: { loadConfig?: typeof loadConfigGenerator }) {
+export async function generatePdfs(moduleName: string, dependencies?: {
+    loadConfig?: typeof loadConfigGenerator,
+    isDryRun?: boolean
+}) {
     const loadConfig = dependencies?.loadConfig ?? loadConfigGenerator;
-
-    const args = process.argv.slice(2);
-    const moduleName = args.find(arg => !arg.startsWith('--'));
-    const isDryRun = args.includes('--dry');
-
-    if (!moduleName) {
-        console.error('Please provide a module name as parameter');
-        process.exit(1);
-    }
+    const isDryRun = dependencies?.isDryRun ?? false;
 
     console.log(`Generating PDFs for module: ${moduleName}`);
 
@@ -254,10 +249,25 @@ export async function generatePdfs(dependencies?: { loadConfig?: typeof loadConf
     console.log(`Meta file generated at: ${metaPath}`);
 }
 
-// This allows the script to be imported for testing without executing
-if (import.meta.env.VITEST === undefined) {
-    generatePdfs().catch(error => {
+async function main() {
+    const args = process.argv.slice(2);
+    const moduleName = args.find(arg => !arg.startsWith('--'));
+    const isDryRun = args.includes('--dry');
+
+    if (!moduleName) {
+        console.error('Please provide a module name as parameter');
+        process.exit(1);
+    }
+
+    try {
+        await generatePdfs(moduleName, {isDryRun});
+    } catch (error) {
         console.error('Error generating PDFs:', error);
         process.exit(1);
-    });
+    }
+}
+
+// This allows the script to be imported for testing without executing
+if (import.meta.env.VITEST === undefined) {
+    main();
 }
