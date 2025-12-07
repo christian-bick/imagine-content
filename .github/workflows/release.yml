@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Start local server
-        run: npm run dev
+        run: npm run preview &
 
       - name: Generate worksheets
         run: npm run generate
