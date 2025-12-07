@@ -1,7 +1,7 @@
 import puppeteer, {Page, ElementHandle} from 'puppeteer';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
-import {existsSync, mkdirSync, readFileSync, writeFileSync, rmSync} from 'fs';
+import {existsSync, mkdirSync, readFileSync, writeFileSync, rmSync, readdirSync} from 'fs';
 import {createHash} from 'crypto';
 import {getSortedUrlSearchParams} from "../lib/params.ts";
 import {execSync} from "child_process"
@@ -249,22 +249,38 @@ export async function generatePdfs(moduleName: string, dependencies?: {
     console.log(`Meta file generated at: ${metaPath}`);
 }
 
+function findWorksheetModules(): string[] {
+    const worksheetsPath = resolve(PROJECT_ROOT, 'src', 'worksheets');
+    const entries = readdirSync(worksheetsPath, { withFileTypes: true });
+    return entries
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name);
+}
+
 async function main() {
     const args = process.argv.slice(2);
     const moduleName = args.find(arg => !arg.startsWith('--'));
     const isDryRun = args.includes('--dry');
 
-    if (!moduleName) {
-        console.error('Please provide a module name as parameter');
-        process.exit(1);
+    const modulesToGenerate = moduleName ? [moduleName] : findWorksheetModules();
+
+    if (modulesToGenerate.length === 0) {
+        console.log('No modules found to generate.');
+        return;
     }
 
-    try {
-        await generatePdfs(moduleName, {isDryRun});
-    } catch (error) {
-        console.error('Error generating PDFs:', error);
-        process.exit(1);
+    console.log(`Found ${modulesToGenerate.length} module(s) to generate: ${modulesToGenerate.join(', ')}`);
+
+    for (const module of modulesToGenerate) {
+        try {
+            console.log(`\n--- Generating PDFs for module: ${module} ---\n`);
+            await generatePdfs(module, {isDryRun});
+            console.log(`\n--- Successfully generated PDFs for module: ${module} ---\n`);
+        } catch (error) {
+            console.error(`\n--- Error generating PDFs for module ${module}: ---\n`, error);
+        }
     }
+    console.log('All PDF generation tasks completed.');
 }
 
 // This allows the script to be imported for testing without executing
