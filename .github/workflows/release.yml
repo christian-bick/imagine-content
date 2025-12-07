@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Start local server
-        run: vite preview --port 5173 &
+        run: npm run preview &
 
       - name: Generate worksheets
         run: npm run generate
